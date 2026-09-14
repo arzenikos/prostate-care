@@ -2,11 +2,11 @@ import { defineConfig, fontProviders } from 'astro/config';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 import icon from 'astro-icon';
-import netlify from '@astrojs/netlify';
+import node from '@astrojs/node';
 // https://astro.build/config
 
 export default defineConfig({
-    adapter: netlify(),
+    adapter: node({ mode: 'standalone' }),
     devToolbar: {
         enabled: false
     },
@@ -61,6 +61,7 @@ export default defineConfig({
         icon(),
     ],
     outDir: './dist',
+    output: 'server',
     publicDir: './public',
     redirects: {},
     vite: {
