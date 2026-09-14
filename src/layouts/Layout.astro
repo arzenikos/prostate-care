@@ -2,7 +2,7 @@
 import SiteHeader from './SiteHeader.astro';
 import SiteFooter from './SiteFooter.astro';
 import HubOverlay from '@components/chrome/HubOverlay.astro';
-import ChatTrigger from '@components/chrome/ChatTrigger.astro';
+import ChatWidget  from '@/components/react/ChatWidget';
 import type { HubId } from '@contents/ui/site';
 import '@styles/globals.css';
                 
@@ -46,7 +46,7 @@ const {
     <main>
       <slot />
     </main>
-    {showChat && <ChatTrigger />}
+    <ChatWidget client:load />
     <SiteFooter />
   </body>
 </html>
