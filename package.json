@@ -14,7 +14,7 @@
     "test:links": "start-server-and-test dev http://localhost:4321 \"linkinator http://localhost:4321 --recurse\""
   },
   "dependencies": {
-    "@astrojs/netlify": "^6.3.4",
+    "@astrojs/node": "^11.1.5",
     "@astrojs/react": "^4.3.0",
     "@fontsource-variable/inter": "^5.2.6",
     "@lerna-lite/npmlog": "5.4.1",
@@ -24,8 +24,7 @@
     "@tailwindcss/vite": "^4.1.10",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
-    "astro": "^5.9.3",
-    "astro-carousel": "^3.0.2",
+    "astro": "^7.3.2",
     "astro-icon": "^1.1.5",
     "blobshape": "^1.0.0",
     "d3": "^7.9.0",
