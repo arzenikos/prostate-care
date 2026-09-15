@@ -68,6 +68,7 @@ This project demonstrates full-stack development using modern web technologies, 
 ```
 <!-- END_STRUCTURE -->
 ---
+
 ## Installation
 
 ### 1. Clone the repository
@@ -113,6 +114,15 @@ The site is deployed on Netlify for easy hosting and continuous deployment:
 3. Automatic redeploy on every push to the main branch.
 
 ---
+
+## Checks
+
+### Linkinator
+
+```bash
+# Local
+npx linkinator http://localhost:4321 --recurse
+```
 
 ## Cleanup
 

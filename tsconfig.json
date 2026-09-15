@@ -8,6 +8,7 @@
         "paths": {
             "@/*": ["./src/*"],
             "@assets/*": ["./public/assets/*"],
+            "@logo/*": ["./public/assets/images/logo/*"],
             "@components/*": ["./src/components/*"],
             "@layouts/*": ["./src/layouts/*"],
             "@utils/*": ["./src/utils/*"],

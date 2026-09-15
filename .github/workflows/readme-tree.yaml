@@ -1,0 +1,22 @@
+name: Auto Update File Structure
+
+on:
+  push:
+    branches:
+      - main # Change to master if your default branch is master
+  workflow_dispatch: # Allows you to run this manually from the Actions tab
+
+jobs:
+  update-tree:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Generate and Insert Tree
+        uses: RavelloH/readme-tree@v1.1.0 # Uses the Readme Tree GitHub Action
+
+      - name: Commit and Push Changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs: auto-update repository file structure [skip ci]"

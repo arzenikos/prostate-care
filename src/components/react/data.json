@@ -1,0 +1,22 @@
+{
+    "general": [
+      { "id": "card-1", "icon": "/icons/general/card-1.svg", "link": "/asas", "title": "Overview" },
+      { "id": "card-2", "icon": "/icons/general/card-2.svg", "link": "/xyz", "title": "Getting started" }
+    ],
+    "stage-1": [
+      { "id": "stage-1-card-1", "icon": "/icons/stage-1/card-1.svg", "link": "/kkhba", "title": "Card A" },
+      { "id": "stage-1-card-2", "icon": "/icons/stage-1/card-2.svg", "link": "/kmhlb", "title": "Card B" }
+    ],
+    "stage-2": [
+      { "id": "stage-1-card-1", "icon": "/icons/stage-1/card-1.svg", "link": "/kjk;a", "title": "Card A" },
+      { "id": "stage-1-card-2", "icon": "/icons/stage-1/card-2.svg", "link": "/sta00llk", "title": "Card B" }
+    ],
+    "stage-3": [
+      { "id": "stage-1-card-1", "icon": "/icons/stage-1/card-1.svg", "link": "/nknk", "title": "Card A" },
+      { "id": "stage-1-card-2", "icon": "/icons/stage-1/card-2.svg", "link": "/stab", "title": "Card B" }
+    ],
+    "stage-4": [
+      { "id": "stage-1-card-1", "icon": "/icons/stage-1/card-1.svg", "link": "/stagjljl", "title": "Card A" },
+      { "id": "stage-1-card-2", "icon": "/icons/stage-1/card-2.svg", "link": "/stage", "title": "Card B" }
+    ]
+  }

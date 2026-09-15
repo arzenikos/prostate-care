@@ -1,0 +1,15 @@
+---
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const papers = await getCollection('journals');
+
+  return papers.map((paper) => ({
+    params: { slug: paper.id },   // ← "pharmacokinetics-of-abiraterone"
+    props: { paper },              // ← pass the whole entry through
+  }));
+}
+
+const { paper } = Astro.props;
+const { Content } = await render(paper); // renders the markdown body
+---

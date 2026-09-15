@@ -1,16 +1,10 @@
 # Build output
 dist/
-.output/
-.vercel/
+# generated types
+.astro/
 .netlify/
 
-# Generated types and caches
-.astro/
-.cache/
-.temp/
-.vite/
-
-# Dependencies
+# dependencies
 node_modules/
 package-lock.json
 yarn.lock
@@ -31,53 +25,21 @@ lerna-debug.log*
 .env.*
 !.env.example
 .env.production
-.env.local
-.env.development
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-!.vscode/settings.json
-!.vscode/launch.json
+# IDE
 .idea/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-.DS_Store
-*.sublime-workspace
+.vscode/
 
-# Testing
-coverage/
-.nyc_output/
-cypress/videos/
-cypress/screenshots/
 
-# Temporary files
-tmp/
-temp/
-.tmp/
-*.tmp
-*.bak
-*.swp
+package-lock.json
 
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# Specific to Astro/Netlify
 .netlify/
 functions/*.js
 functions/*.map
 
 
 # Assets
+public/assets/*
 public/assets/
 
 

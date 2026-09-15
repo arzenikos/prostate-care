@@ -7,7 +7,7 @@ export const brand = {
 export const footerLinks = [
   {
     label: 'Documentation',
-    href: 'https://github.com/arzenikos/blueprint-nz',
+    href: 'https://github.com/arzenikos/prostate-care',
     icon: 'github' as const,
     external: true,
   },
@@ -63,7 +63,7 @@ export const hubs = {
     intro:
       'To help you find the right answers without the noise, please select the clinical state or treatment stage that best describes where you or your loved one are today. We will instantly tailor the page to show only what is relevant to you.',
     prompt: 'I am looking for information on...',
-    illustration: 'Placeholder: prostate anatomy illustration',
+    illustration: 'path-cards/path-patient-space',
   },
   whanau: {
     kicker: 'WHĀNAU SUPPORT HUB',
@@ -76,7 +76,7 @@ export const hubs = {
     intro:
       'To help you find the right answers without the noise, please select the clinical state or treatment stage that best describes where you or your loved one are today. We will instantly tailor the page to show only what is relevant to you.',
     sectionTitle: 'The Basics You Need',
-    illustration: 'Placeholder: family with ribbon illustration',
+    illustration: 'path-cards/path-family-corner',
   },
   research: {
     kicker: 'RESEARCH KNOWLEDGE HUB',
@@ -90,7 +90,7 @@ export const hubs = {
       'Explore peer-reviewed clinical trial data, pharmacokinetic analyses, and epidemiological statistics shaping modern prostate oncology.',
     cta: 'View NZ and global data',
     ctaHref: '/blueprint/bluestats',
-    illustration: 'Placeholder: microscope and awareness ribbon',
+    illustration: 'path-cards/path-researcher-hub',
   },
 };
 

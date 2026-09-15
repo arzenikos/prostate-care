@@ -1,10 +1,11 @@
 ---
-import SiteHeader from './SiteHeader.astro';
-import SiteFooter from './SiteFooter.astro';
-import HubOverlay from '@components/chrome/HubOverlay.astro';
-import ChatTrigger from '@components/chrome/ChatTrigger.astro';
+import SiteHeader from '@layouts/SiteHeader.astro';
+import SiteFooter from '@layouts/SiteFooter.astro';
+import HubOverlay from '@components/astro/chrome/HubOverlay.astro';
+import ChatWidget  from '@components/react/ChatWidget';
+import PrometheusChat from '@components/astro/chrome/PrometheusChat.astro';
 import type { HubId } from '@contents/ui/site';
-import '../styles/globals.css';
+import '@styles/globals.css';
                 
 
 interface Props {
@@ -40,13 +41,14 @@ const {
   </head>
   <body>
     <SiteHeader variant={variant} hub={hub} />
+    <PrometheusChat client:load />
     
     <HubOverlay />
 
     <main>
       <slot />
     </main>
-    {showChat && <ChatTrigger />}
+    <!-- <ChatWidget client:load /> -->
     <SiteFooter />
   </body>
 </html>
