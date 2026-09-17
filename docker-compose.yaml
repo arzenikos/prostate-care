@@ -1,12 +1,12 @@
 services:
   db:
-    image: arzenikos/pgvector:latest
-    container_name: prostate-care-db
+    image: pgvector/pgvector:pg18-trixie
+    container_name: prostatecaredb
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: prostatecaredb
+      POSTGRES_DB: ${DB_NAME}
     ports:
       - "5432:5432"
     volumes:
@@ -25,14 +25,5 @@ services:
     environment:
       PGAI_VECTORIZER_WORKER_DB_URL: ${DATABASE_URL}
     restart: unless-stopped
-  ollama:
-    image: ollama/ollama:latest
-    container_name: prostate-care-ollama
-    restart: unless-stopped
-    ports:
-      - "11434:11434"
-    volumes:
-      - ollama_models:/root/.ollama
 volumes:
   pgdata:
-  ollama_models:
