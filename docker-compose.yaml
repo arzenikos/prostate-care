@@ -1,6 +1,7 @@
 services:
   db:
-    image: pgvector/pgvector:pg16
+    image: arzenikos/pgvector:latest
+    container_name: prostate-care-db
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${DB_USERNAME}
@@ -10,6 +11,28 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-
+      - ./db/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  vectorizer-worker:
+    image: timescale/pgai-vectorizer-worker:latest
+    container_name: pgai-vectorizer-worker
+    depends_on:
+      - db
+    environment:
+      PGAI_VECTORIZER_WORKER_DB_URL: ${DATABASE_URL}
+    restart: unless-stopped
+  ollama:
+    image: ollama/ollama:latest
+    container_name: prostate-care-ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_models:/root/.ollama
 volumes:
   pgdata:
+  ollama_models:
