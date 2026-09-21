@@ -1,4 +1,3 @@
-// src/pages/api/chat.ts
 import type { APIRoute } from "astro";
 import pg from "pg";
 

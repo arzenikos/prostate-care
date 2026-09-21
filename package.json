@@ -11,6 +11,7 @@
     "astro": "astro",
     "initasset": "cp -r src/assets/ public/assets/",
     "ollama-setup": "docker compose up -d && docker exec prostate-care-ollama ollama pull nomic-embed-text && docker exec prostate-care-ollama ollama pull qwen3.5:9b",
+    "ingest": "tsx --env-file=.env src/scripts/ingest.ts",
     "close": "rm -rf node_modules && rm -rf package-lock.json",
     "test:links": "start-server-and-test dev http://localhost:4321 \"linkinator http://localhost:4321 --recurse\""
   },
