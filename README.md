@@ -37,38 +37,6 @@ This project demonstrates full-stack development using modern web technologies, 
 - Deployment: Seamlessly hosted on Netlify with automated CI/CD.
 
 
-## Project Structure
-<!-- START_STRUCTURE -->
-```text
-.
-├── README.md
-├── astro.config.mjs
-├── netlify.toml
-├── package.json
-├── pnpm-lock.yaml
-├── pnpm-workspace.yaml
-├── public
-│   └── assets
-├── renovate.json
-├── sonar-project.properties
-├── src
-│   ├── assets
-│   ├── components
-│   ├── content
-│   ├── layouts
-│   ├── lib
-│   ├── pages
-│   ├── styles
-│   └── tsconfig.json
-├── structure.txt
-├── tailwind.config.ts
-└── tsconfig.json
-
-11 directories, 12 files
-```
-<!-- END_STRUCTURE -->
----
-
 ## Installation
 
 ### 1. Clone the repository
@@ -157,3 +125,11 @@ git submodule update --init --recursive
 > ## **Disclaimer**
 >
 > All the content presented here is the result of my own individual work, and any resemblance to other works is purely coincidental. If you are a student, please refrain from using or copying this work in any way that violates the principles of academic honesty and integrity.
+
+
+## Project Structure
+<!-- START_STRUCTURE -->
+```text
+
+```
+<!-- END_STRUCTURE -->
