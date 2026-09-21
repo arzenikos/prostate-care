@@ -25,5 +25,14 @@ services:
     environment:
       PGAI_VECTORIZER_WORKER_DB_URL: ${DATABASE_URL}
     restart: unless-stopped
+  ollama:
+    image: ollama/ollama:latest
+    container_name: pamana-ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_models:/root/.ollama
 volumes:
   pgdata:
+  ollama_models:
