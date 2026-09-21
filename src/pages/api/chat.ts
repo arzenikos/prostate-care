@@ -1,28 +1,45 @@
 import type { APIRoute } from "astro";
-import pg from "pg";
+import { z } from "zod";
+import { config } from "@rag-library/config";
+import { streamChat } from "@rag-library/llm";
+import { MESSAGES } from "@rag-library/messages";
+import { buildMessages } from "@rag-library/prompts";
+import { retrieveContext, toCitations } from "@rag-library/retrieval";
 
-const pool = new pg.Pool({ connectionString: import.meta.env.DATABASE_URL });
+export const prerender = false;
+
+const SOURCES_HEADER = "X-Sources";
+const TEXT_CONTENT_TYPE = "text/plain; charset=utf-8";
+
+const requestSchema = z.object({
+  question: z.string().trim().min(1).max(config.MAX_QUESTION_LENGTH),
+});
 
 export const POST: APIRoute = async ({ request }) => {
-  const { question } = await request.json();
+  const parsed = requestSchema.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) {
+    return Response.json({ error: MESSAGES.invalidRequest }, { status: 400 });
+  }
+  const { question } = parsed.data;
 
-  const r = await fetch("http://localhost:11434/api/embed", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ model: "nomic-embed-text", input: `search_query: ${question}` }),
-  });
-  const [qvec] = (await r.json()).embeddings;
+  try {
+    const chunks = await retrieveContext(question);
+    if (chunks.length === 0) {
+      return new Response(MESSAGES.noContext, {
+        headers: { "Content-Type": TEXT_CONTENT_TYPE },
+      });
+    }
 
-  const { rows } = await pool.query(
-    `SELECT c.content, c.page, d.filename,
-            1 - (c.embedding <=> $1::vector) AS score
-     FROM chunks c JOIN documents d ON d.id = c.document_id
-     ORDER BY c.embedding <=> $1::vector
-     LIMIT 5`,
-    [JSON.stringify(qvec)]
-  );
-
-  const context = rows.map((x) => `[${x.filename} p.${x.page}]\n${x.content}`).join("\n\n---\n\n");
-  // ...send `context` + `question` to your LLM (Ollama /api/chat or Anthropic) and return the answer
-  return new Response(JSON.stringify({ sources: rows }), { status: 200 });
+    const stream = await streamChat(buildMessages(question, chunks), request.signal);
+    return new Response(stream, {
+      headers: {
+        "Content-Type": TEXT_CONTENT_TYPE,
+        // URL-encoded because header values must be ASCII; decode client-side
+        [SOURCES_HEADER]: encodeURIComponent(JSON.stringify(toCitations(chunks))),
+      },
+    });
+  } catch (err) {
+    console.error("[api/chat]", err);
+    return Response.json({ error: MESSAGES.serverError }, { status: 500 });
+  }
 };

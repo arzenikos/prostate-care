@@ -1,5 +1,5 @@
-import { pool } from "@library/rag/db";
-import { ingestDirectory } from "@library/rag/ingestion";
+import { pool } from "@rag-library/db";
+import { ingestDirectory } from "@rag-library/ingestion";
 
 const FORCE_FLAG = "--force";
 
