@@ -3,7 +3,6 @@ import path from "node:path";
 import crypto from "node:crypto";
 import { config } from "./config";
 
-// npm i unpdf   (lightweight, no native deps, works well in Node + edge runtimes)
 import { extractText, getDocumentProxy } from "unpdf";
 
 export interface DiscoveredPdf {
@@ -28,6 +27,13 @@ export interface PageText {
   text: string;
 }
 
+// Postgres' text type cannot store 0x00 at all — some PDFs (scanned docs, odd
+// font encodings, corrupted text layers) yield stray null bytes from pdf.js.
+// Strip them here, at the source, so nothing downstream has to think about it.
+function sanitizeText(text: string): string {
+  return text.replace(/\u0000/g, "");
+}
+
 export async function extractPages(sourcePath: string): Promise<PageText[]> {
   const buffer = fs.readFileSync(sourcePath);
   const pdf = await getDocumentProxy(new Uint8Array(buffer));
@@ -35,7 +41,8 @@ export async function extractPages(sourcePath: string): Promise<PageText[]> {
   const pages: PageText[] = [];
   for (let i = 0; i < totalPages; i++) {
     const { text } = await extractText(pdf, { mergePages: false, page: i + 1 } as any);
-    pages.push({ pageNumber: i + 1, text: Array.isArray(text) ? text[0] : text });
+    const raw = Array.isArray(text) ? text[0] : text;
+    pages.push({ pageNumber: i + 1, text: sanitizeText(raw) });
   }
   return pages;
 }
