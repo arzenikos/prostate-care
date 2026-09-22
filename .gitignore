@@ -43,3 +43,7 @@ public/assets/*
 public/assets/
 
 
+# pgvector
+pgvector/
+
+

@@ -1,0 +1,33 @@
+---
+import { resolveAsset } from '@utils/resolveAssets';
+
+interface Props {
+  href?: string;
+  size?: 'sm' | 'md' | 'lg';
+  alt?: string;
+}
+
+const { href = '/', size = 'md', alt = 'Prostate Care logo' } = Astro.props;
+---
+
+<a href={href} class=`brand-mark brand-mark--${size}` aria-label="Prostate Care home">
+  <img src={resolveAsset("logo/pamana-logo-blue.png")} alt={alt} />
+</a>
+
+<style>
+  .brand-mark {
+    display: inline-flex;
+    flex-shrink: 0;
+    text-decoration: none;
+  }
+
+  .brand-mark img {
+    display: block;
+    height: auto;
+    border-radius: 12px;
+  }
+
+  .brand-mark--sm img { width: 40px; }
+  .brand-mark--md img { width: 56px; }
+  .brand-mark--lg img { width: 65px; }
+</style>

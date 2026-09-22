@@ -3,7 +3,7 @@ name: Auto Update File Structure
 on:
   push:
     branches:
-      - sandbox
+      - feature/pgvector-setup # Change to this branch
   workflow_dispatch: # Allows you to run this manually from the Actions tab
 
 jobs:

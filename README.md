@@ -37,38 +37,6 @@ This project demonstrates full-stack development using modern web technologies, 
 - Deployment: Seamlessly hosted on Netlify with automated CI/CD.
 
 
-## Project Structure
-<!-- START_STRUCTURE -->
-```text
-.
-├── README.md
-├── astro.config.mjs
-├── netlify.toml
-├── package.json
-├── pnpm-lock.yaml
-├── pnpm-workspace.yaml
-├── public
-│   └── assets
-├── renovate.json
-├── sonar-project.properties
-├── src
-│   ├── assets
-│   ├── components
-│   ├── content
-│   ├── layouts
-│   ├── lib
-│   ├── pages
-│   ├── styles
-│   └── tsconfig.json
-├── structure.txt
-├── tailwind.config.ts
-└── tsconfig.json
-
-11 directories, 12 files
-```
-<!-- END_STRUCTURE -->
----
-
 ## Installation
 
 ### 1. Clone the repository
@@ -156,109 +124,107 @@ git submodule update --init --recursive
 >
 > ## **Disclaimer**
 >
+> All the content presented here is the result of my own individual work, and any resemblance to other works is purely coincidental. If you are a student, please refrain from using or copying this work in any way that violates the principles of academic honesty and integrity.
+
+
+## Project Structure
 <!-- readme-tree start -->
 ```
 .
+├── .env.example
 ├── .github
 │   └── workflows
-│       ├── build.yaml
-│       ├── readme-tree.yaml
-│       ├── sonarcloud.yaml
-│       └── sonarqube.yaml
+│       └── readme-tree.yaml
 ├── .gitignore
 ├── .gitmodules
 ├── README.md
 ├── astro.config.mjs
+├── db
+│   └── migrations
+│       └── 0001_init.sql
 ├── desktop.ini
+├── docker-compose.yaml
+├── ollama-client.ts
 ├── package.json
+├── public
+│   └── assets
 ├── src
 │   ├── components
-│   │   ├── CanvasNav.astro
-│   │   ├── NodeGraph
-│   │   │   ├── BlueGuideDetails.astro
-│   │   │   └── GraphCanvas.astro
-│   │   ├── accordion
-│   │   │   └── StageAccordion.astro
-│   │   ├── article
-│   │   │   ├── RelatedArticles.astro
-│   │   │   └── SimpleArticle.astro
 │   │   ├── astro
-│   │   │   ├── BaseHead.astro
-│   │   │   ├── Footer.astro
-│   │   │   ├── FormattedDate.astro
-│   │   │   ├── Header.astro
-│   │   │   ├── HeaderLink.astro
+│   │   │   ├── NodeGraph
+│   │   │   │   ├── BlueGuideDetails.astro
+│   │   │   │   ├── CanvasNav.astro
+│   │   │   │   └── GraphCanvas.astro
+│   │   │   ├── accordion
+│   │   │   │   └── StageAccordion.astro
+│   │   │   ├── article
+│   │   │   │   ├── RelatedArticles.astro
+│   │   │   │   └── SimpleArticle.astro
+│   │   │   ├── brand
+│   │   │   │   └── BrandMark.astro
+│   │   │   ├── button
+│   │   │   │   └── PrometheusAIButton.astro
 │   │   │   ├── cards
-│   │   │   │   ├── Card.astro
-│   │   │   │   └── Persona.astro
-│   │   │   └── xAccordionCard.astro
-│   │   ├── brand
-│   │   │   └── BrandMark.astro
-│   │   ├── button
-│   │   │   └── PrometheusAIButton.astro
-│   │   ├── cards
-│   │   │   ├── CategoryCard.astro
-│   │   │   └── PersonaCard.astro
-│   │   ├── chrome
-│   │   │   ├── AccessibilityPanelOverlay.astro
-│   │   │   ├── ChatTrigger.astro
-│   │   │   ├── HubOverlay.astro
-│   │   │   ├── SplashScreen.astro
-│   │   │   └── UtilityNav.astro
-│   │   ├── hero
-│   │   │   └── HubHero.astro
-│   │   ├── media
-│   │   │   ├── ArticleThumbnail.astro
-│   │   │   ├── Canvas.astro
-│   │   │   ├── HeroThumbnail.astro
-│   │   │   ├── OverlayThumbnail.astro
-│   │   │   ├── PersonaThumbnail.astro
-│   │   │   └── PlaceholderMedia.astro
-│   │   ├── react
-│   │   │   ├── AccordionToggle.tsx
-│   │   │   ├── CardGrid.tsx
-│   │   │   └── data.json
-│   │   └── ui
-│   │       ├── Breadcrumbs.astro
-│   │       ├── Callout.astro
-│   │       └── LineIcon.astro
+│   │   │   │   ├── CategoryCard.astro
+│   │   │   │   └── PersonaCard.astro
+│   │   │   ├── chrome
+│   │   │   │   ├── AccessibilityPanelOverlay.astro
+│   │   │   │   ├── ChatTrigger.astro
+│   │   │   │   ├── HubOverlay.astro
+│   │   │   │   ├── PrometheusChat.astro
+│   │   │   │   ├── SplashScreen.astro
+│   │   │   │   └── UtilityNav.astro
+│   │   │   ├── hero
+│   │   │   │   └── HubHero.astro
+│   │   │   ├── media
+│   │   │   │   ├── ArticleThumbnail.astro
+│   │   │   │   ├── Canvas.astro
+│   │   │   │   ├── HeroThumbnail.astro
+│   │   │   │   ├── OverlayThumbnail.astro
+│   │   │   │   └── PlaceholderMedia.astro
+│   │   │   └── ui
+│   │   │       ├── Breadcrumbs.astro
+│   │   │       ├── Callout.astro
+│   │   │       └── LineIcon.astro
+│   │   └── react
+│   │       ├── AccordionToggle.tsx
+│   │       ├── CardGrid.tsx
+│   │       ├── ChatWidget.tsx
+│   │       ├── PrometheusChatContent.tsx
+│   │       └── data.json
 │   ├── consts.ts
 │   ├── content
-│   │   ├── articles
-│   │   │   ├── diagnosis
-│   │   │   │   └── something.md
-│   │   │   └── patient
-│   │   │       ├── stage-0
-│   │   │       │   ├── should-i-get-screened.md
-│   │   │       │   ├── small-choices-big-impact.md
-│   │   │       │   └── what-you-need-to-know-early.md
-│   │   │       ├── stage-1
-│   │   │       │   ├── doctor-time-making-every-visit-count.md
-│   │   │       │   ├── navigating-your-options.md
-│   │   │       │   └── understanding-your-diagnosis.md
-│   │   │       ├── stage-2
-│   │   │       │   ├── body-care-that-builds-you-up.md
-│   │   │       │   ├── staying-grounded-through-it-all.md
-│   │   │       │   └── your-body-your-needs.md
-│   │   │       ├── stage-3
-│   │   │       │   ├── caring-for-a-tired-body.md
-│   │   │       │   ├── finding-your-ground.md
-│   │   │       │   └── what-to-expect-now.md
-│   │   │       └── stage-4
-│   │   │           ├── honouring-your-life.md
-│   │   │           ├── support-for-the-day-to-day.md
-│   │   │           └── the-care-that-fits-you.md
-│   │   ├── blog
+│   │   ├── family
 │   │   │   ├── first-post.md
 │   │   │   ├── markdown-style-guide.md
 │   │   │   ├── second-post.md
 │   │   │   ├── third-post.md
 │   │   │   └── using-mdx.mdx
-│   │   ├── research
+│   │   ├── patients
+│   │   │   ├── stage-0
+│   │   │   │   ├── should-i-get-screened.md
+│   │   │   │   ├── small-choices-big-impact.md
+│   │   │   │   └── what-you-need-to-know-early.md
+│   │   │   ├── stage-1
+│   │   │   │   ├── doctor-time-making-every-visit-count.md
+│   │   │   │   ├── navigating-your-options.md
+│   │   │   │   └── understanding-your-diagnosis.md
+│   │   │   ├── stage-2
+│   │   │   │   ├── body-care-that-builds-you-up.md
+│   │   │   │   ├── staying-grounded-through-it-all.md
+│   │   │   │   └── your-body-your-needs.md
+│   │   │   ├── stage-3
+│   │   │   │   ├── caring-for-a-tired-body.md
+│   │   │   │   ├── finding-your-ground.md
+│   │   │   │   └── what-to-expect-now.md
+│   │   │   └── stage-4
+│   │   │       ├── honouring-your-life.md
+│   │   │       ├── support-for-the-day-to-day.md
+│   │   │       └── the-care-that-fits-you.md
+│   │   ├── researchers
 │   │   │   ├── first-post.md
 │   │   │   ├── second-post.md
-│   │   │   ├── third-post.md
-│   │   │   └── using-mdx.mdx
+│   │   │   └── third-post.md
 │   │   ├── sections.data.ts
 │   │   └── ui
 │   │       ├── article-paths.ts
@@ -277,9 +243,24 @@ git submodule update --init --recursive
 │   ├── lib
 │   │   ├── markdown.ts
 │   │   ├── patient-articles.ts
+│   │   ├── rag
+│   │   │   ├── chunking.ts
+│   │   │   ├── config.ts
+│   │   │   ├── db.ts
+│   │   │   ├── embeddings.ts
+│   │   │   ├── ingestion.ts
+│   │   │   ├── llm.ts
+│   │   │   ├── messages.ts
+│   │   │   ├── pdf.ts
+│   │   │   ├── prompts.ts
+│   │   │   ├── rateLimit.ts
+│   │   │   ├── repository.ts
+│   │   │   └── retrieval.ts
 │   │   └── types
 │   │       └── nav.ts
 │   ├── pages
+│   │   ├── api
+│   │   │   └── chat.ts
 │   │   ├── bluenode.astro
 │   │   ├── clinics.astro
 │   │   ├── family-support
@@ -324,6 +305,11 @@ git submodule update --init --recursive
 │   │       ├── user-guide.astro
 │   │       ├── volunteer.astro
 │   │       └── xnewsletter.astro
+│   ├── scripts
+│   │   ├── eval.cases.json
+│   │   ├── eval.ts
+│   │   ├── ingest.ts
+│   │   └── search.ts
 │   ├── styles
 │   │   ├── globals.css
 │   │   ├── markdown.css
@@ -334,6 +320,6 @@ git submodule update --init --recursive
 ├── tree.bak
 └── tsconfig.json
 
-42 directories, 133 files
+46 directories, 143 files
 ```
 <!-- readme-tree end -->
