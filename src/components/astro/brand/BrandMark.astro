@@ -11,7 +11,7 @@ const { href = '/', size = 'md', alt = 'Prostate Care logo' } = Astro.props;
 ---
 
 <a href={href} class=`brand-mark brand-mark--${size}` aria-label="Prostate Care home">
-  <img src={resolveAsset("logo/pamana-logo-blue.png")} alt={alt} width="88" height="88" />
+  <img src={resolveAsset("logo/pamana-logo-blue.png")} alt={alt} />
 </a>
 
 <style>

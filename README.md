@@ -128,8 +128,3 @@ git submodule update --init --recursive
 
 
 ## Project Structure
-<!-- START_STRUCTURE -->
-```text
-
-```
-<!-- END_STRUCTURE -->
