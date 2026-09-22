@@ -128,12 +128,8 @@ git submodule update --init --recursive
 
 
 ## Project Structure
-<!-- START_STRUCTURE -->
-```text
-
-```
 <!-- readme-tree start -->
-```
+```text
 .
 ├── .env.example
 ├── .github
