@@ -11,8 +11,8 @@ const schema = z.object({
   EMBEDDING_QUERY_PREFIX: z.string().default(""),
   EMBEDDING_BATCH_SIZE: z.coerce.number().int().positive().default(16),
 
-  CHUNK_SIZE: z.coerce.number().int().positive().default(1500),
-  CHUNK_OVERLAP: z.coerce.number().int().nonnegative().default(200),
+  CHUNK_SIZE_TOKENS: z.coerce.number().int().positive().default(1500),
+  CHUNK_OVERLAP_TOKENS: z.coerce.number().int().nonnegative().default(200),
 
   CHAT_MODEL: z.string().min(1),
   RETRIEVAL_TOP_K: z.coerce.number().int().positive().default(5),

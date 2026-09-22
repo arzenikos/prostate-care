@@ -1,45 +1,36 @@
 import type { APIRoute } from "astro";
-import { z } from "zod";
-import { config } from "@rag-library/config";
+import { retrieveForQuery } from "@rag-library/retrieval";
+import { buildSystemPrompt, buildUserPrompt } from "@rag-library/prompts";
 import { streamChat } from "@rag-library/llm";
+import { checkRateLimit } from "@rag-library/rateLimit";
 import { MESSAGES } from "@rag-library/messages";
-import { buildMessages } from "@rag-library/prompts";
-import { retrieveContext, toCitations } from "@rag-library/retrieval";
 
-export const prerender = false;
-
-const SOURCES_HEADER = "X-Sources";
-const TEXT_CONTENT_TYPE = "text/plain; charset=utf-8";
-
-const requestSchema = z.object({
-  question: z.string().trim().min(1).max(config.MAX_QUESTION_LENGTH),
-});
-
-export const POST: APIRoute = async ({ request }) => {
-  const parsed = requestSchema.safeParse(await request.json().catch(() => null));
-  if (!parsed.success) {
-    return Response.json({ error: MESSAGES.invalidRequest }, { status: 400 });
+export const POST: APIRoute = async ({ request, clientAddress }) => {
+  if (!checkRateLimit(clientAddress)) {
+    return new Response(MESSAGES.rateLimited, { status: 429 });
   }
-  const { question } = parsed.data;
 
-  try {
-    const chunks = await retrieveContext(question);
-    if (chunks.length === 0) {
-      return new Response(MESSAGES.noContext, {
-        headers: { "Content-Type": TEXT_CONTENT_TYPE },
-      });
-    }
+  const { question } = await request.json();
+  const chunks = await retrieveForQuery(question);
 
-    const stream = await streamChat(buildMessages(question, chunks), request.signal);
-    return new Response(stream, {
-      headers: {
-        "Content-Type": TEXT_CONTENT_TYPE,
-        // URL-encoded because header values must be ASCII; decode client-side
-        [SOURCES_HEADER]: encodeURIComponent(JSON.stringify(toCitations(chunks))),
-      },
-    });
-  } catch (err) {
-    console.error("[api/chat]", err);
-    return Response.json({ error: MESSAGES.serverError }, { status: 500 });
+  if (chunks.length === 0) {
+    return new Response(MESSAGES.noContext, { status: 200 });
   }
+
+  const systemPrompt = buildSystemPrompt();
+  const userPrompt = buildUserPrompt(question, chunks);
+  const sources = chunks.map(c => `${c.sourcePath}#p${c.pageNumber}`).join(",");
+
+  const stream = new ReadableStream({
+    async start(controller) {
+      for await (const token of streamChat(systemPrompt, userPrompt)) {
+        controller.enqueue(new TextEncoder().encode(token));
+      }
+      controller.close();
+    },
+  });
+
+  return new Response(stream, {
+    headers: { "Content-Type": "text/plain; charset=utf-8", "X-Sources": sources },
+  });
 };

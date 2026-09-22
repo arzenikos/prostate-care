@@ -1,70 +1,65 @@
 import { pool, toVectorLiteral } from "./db";
+import type { Chunk } from "./chunking";
 
-export interface NewChunk {
-  page: number;
-  content: string;
-  embedding: number[];
+export async function findDocumentByPath(sourcePath: string) {
+  const { rows } = await pool.query(
+    `SELECT id, content_hash FROM documents WHERE source_path = $1`,
+    [sourcePath]
+  );
+  return rows[0] as { id: string; content_hash: string } | undefined;
+}
+
+export async function upsertDocument(sourcePath: string, contentHash: string, title: string) {
+  const { rows } = await pool.query(
+    `INSERT INTO documents (source_path, content_hash, title)
+     VALUES ($1, $2, $3)
+     ON CONFLICT (source_path) DO UPDATE SET content_hash = EXCLUDED.content_hash
+     RETURNING id`,
+    [sourcePath, contentHash, title]
+  );
+  return rows[0].id as string;
+}
+
+export async function deleteChunksForDocument(documentId: string) {
+  await pool.query(`DELETE FROM chunks WHERE document_id = $1`, [documentId]);
+}
+
+export async function insertChunk(
+  documentId: string,
+  chunk: Chunk,
+  embedding: number[]
+) {
+  await pool.query(
+    `INSERT INTO chunks (document_id, chunk_index, page_number, content, embedding)
+     VALUES ($1, $2, $3, $4, $5::vector)`,
+    [documentId, chunk.chunkIndex, chunk.pageNumber, chunk.content, toVectorLiteral(embedding)]
+  );
 }
 
 export interface RetrievedChunk {
   content: string;
-  page: number | null;
-  source: string;
-  score: number;
+  pageNumber: number | null;
+  sourcePath: string;
+  similarity: number;
 }
 
-export async function getStoredHash(source: string): Promise<string | null> {
-  const { rows } = await pool.query<{ content_hash: string | null }>(
-    "SELECT content_hash FROM documents WHERE source = $1",
-    [source],
-  );
-  return rows[0]?.content_hash ?? null;
-}
-
-/** Atomically replaces a document and all of its chunks. */
-export async function replaceDocument(
-  source: string,
-  hash: string,
-  chunks: NewChunk[],
-): Promise<void> {
-  const client = await pool.connect();
-  try {
-    await client.query("BEGIN");
-    await client.query("DELETE FROM documents WHERE source = $1", [source]);
-    const { rows } = await client.query<{ id: number }>(
-      "INSERT INTO documents (source, content_hash) VALUES ($1, $2) RETURNING id",
-      [source, hash],
-    );
-    const documentId = rows[0].id;
-
-    for (const [index, chunk] of chunks.entries()) {
-      await client.query(
-        `INSERT INTO chunks (document_id, chunk_index, page, content, embedding)
-         VALUES ($1, $2, $3, $4, $5::vector)`,
-        [documentId, index, chunk.page, chunk.content, toVectorLiteral(chunk.embedding)],
-      );
-    }
-    await client.query("COMMIT");
-  } catch (err) {
-    await client.query("ROLLBACK");
-    throw err;
-  } finally {
-    client.release();
-  }
-}
-
-export async function searchChunks(
+export async function retrieveSimilarChunks(
   queryEmbedding: number[],
-  limit: number,
+  topK: number
 ): Promise<RetrievedChunk[]> {
-  const { rows } = await pool.query<RetrievedChunk>(
-    `SELECT c.content, c.page, d.source,
-            1 - (c.embedding <=> $1::vector) AS score
+  const { rows } = await pool.query(
+    `SELECT c.content, c.page_number, d.source_path,
+            1 - (c.embedding <=> $1::vector) AS similarity
      FROM chunks c
      JOIN documents d ON d.id = c.document_id
      ORDER BY c.embedding <=> $1::vector
      LIMIT $2`,
-    [toVectorLiteral(queryEmbedding), limit],
+    [toVectorLiteral(queryEmbedding), topK]
   );
-  return rows;
+  return rows.map(r => ({
+    content: r.content,
+    pageNumber: r.page_number,
+    sourcePath: r.source_path,
+    similarity: r.similarity,
+  }));
 }

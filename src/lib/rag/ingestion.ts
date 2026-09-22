@@ -1,56 +1,35 @@
-import { config } from "./config";
-import { chunkText } from "./chunking";
-import { embedMany } from "./embeddings";
-import { extractPages, listPdfs, readPdf } from "./pdf";
-import { getStoredHash, replaceDocument, type NewChunk } from "./repository";
+import { discoverPdfs, extractPages } from "./pdf";
+import { chunkPages } from "./chunking";
+import { embedBatch } from "./embeddings";
+import * as repo from "./repository";
+import path from "node:path";
 
-export interface IngestOptions {
-  force?: boolean;
-}
+export async function ingestAll() {
+  console.log("[DEBUG START ingestAll()] starting ingestion...");
+  const pdfs = discoverPdfs();
+  console.log(`found ${pdfs.length} PDFs`);
 
-export interface IngestSummary {
-  ingested: number;
-  skipped: number;
-  failed: number;
-}
-
-type FileResult = "ingested" | "skipped";
-
-async function ingestFile(source: string, force: boolean): Promise<FileResult> {
-  const { hash, bytes } = await readPdf(config.PDF_SOURCE_DIR, source);
-  if (!force && (await getStoredHash(source)) === hash) return "skipped";
-
-  const pages = await extractPages(bytes);
-  const items = pages.flatMap((text, i) =>
-    chunkText(text, { size: config.CHUNK_SIZE, overlap: config.CHUNK_OVERLAP }).map(
-      (content) => ({ page: i + 1, content }),
-    ),
-  );
-  if (items.length === 0) {
-    throw new Error("No extractable text (scanned PDF? run OCR first)");
-  }
-
-  const embeddings = await embedMany(items.map((i) => i.content), "document");
-  const chunks: NewChunk[] = items.map((item, i) => ({ ...item, embedding: embeddings[i] }));
-
-  await replaceDocument(source, hash, chunks);
-  console.log(`ingested ${source} (${chunks.length} chunks)`);
-  return "ingested";
-}
-
-export async function ingestDirectory({ force = false }: IngestOptions = {}): Promise<IngestSummary> {
-  const sources = await listPdfs(config.PDF_SOURCE_DIR);
-  const summary: IngestSummary = { ingested: 0, skipped: 0, failed: 0 };
-
-  for (const source of sources) {
-    try {
-      const result = await ingestFile(source, force);
-      summary[result === "ingested" ? "ingested" : "skipped"]++;
-      if (result === "skipped") console.log(`skipped ${source} (unchanged)`);
-    } catch (err) {
-      summary.failed++;
-      console.error(`failed ${source}:`, err instanceof Error ? err.message : err);
+  for (const pdf of pdfs) {
+    const existing = await repo.findDocumentByPath(pdf.sourcePath);
+    if (existing && existing.content_hash === pdf.contentHash) {
+      console.log(`skip (unchanged): ${pdf.sourcePath}`);
+      continue;
     }
+
+    console.log(`ingesting: ${pdf.sourcePath}`);
+    const title = path.basename(pdf.sourcePath, ".pdf");
+    const documentId = await repo.upsertDocument(pdf.sourcePath, pdf.contentHash, title);
+
+    if (existing) await repo.deleteChunksForDocument(documentId); // re-embed on content change
+
+    const pages = await extractPages(pdf.sourcePath);
+    const chunks = chunkPages(pages);
+    const embeddings = await embedBatch(chunks.map(c => c.content));
+
+    for (let i = 0; i < chunks.length; i++) {
+      await repo.insertChunk(documentId, chunks[i], embeddings[i]);
+    }
+    console.log(`  -> ${chunks.length} chunks embedded`);
+    console.log("[DEBUG END ingestAll()] finished ingestion...");
   }
-  return summary;
 }

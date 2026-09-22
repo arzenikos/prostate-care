@@ -1,18 +1,5 @@
-import { pool } from "@rag-library/db";
-import { ingestDirectory } from "@rag-library/ingestion";
+import { ingestAll } from "@rag-library/ingestion";
 
-const FORCE_FLAG = "--force";
-
-async function main() {
-  const force = process.argv.includes(FORCE_FLAG);
-  const summary = await ingestDirectory({ force });
-  console.log("done:", summary);
-  process.exitCode = summary.failed > 0 ? 1 : 0;
-}
-
-main()
-  .catch((err) => {
-    console.error(err);
-    process.exitCode = 1;
-  })
-  .finally(() => pool.end());
+ingestAll()
+  .then(() => { console.log("done"); process.exit(0); })
+  .catch(err => { console.error(err); process.exit(1); });

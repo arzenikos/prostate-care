@@ -1,18 +1,15 @@
-import { readFile } from "node:fs/promises";
-import { embedOne } from "@rag-library/embeddings";
-import { pool } from "@rag-library/db";
-import { searchChunks } from "@rag-library/repository";
-import { config } from "@rag-library/config";
+import { retrieveForQuery } from "@rag-library/retrieval";
 
-const cases: { question: string; expectedSource: string }[] =
-  JSON.parse(await readFile(process.argv[2] ?? "eval/cases.json", "utf8"));
+const testCases = [
+  { query: "What is a PSA test?", expectSourceContains: "psa" },
+  // add real questions you know the answer to from your own PDFs
+];
 
-let hits = 0;
-for (const c of cases) {
-  const results = await searchChunks(await embedOne(c.question, "query"), config.RETRIEVAL_TOP_K);
-  const hit = results.some((r) => r.source === c.expectedSource);
-  if (hit) hits++;
-  else console.log(`MISS: ${c.question}\n   got: ${results.map((r) => r.source).join(", ")}`);
+async function run() {
+  for (const tc of testCases) {
+    const results = await retrieveForQuery(tc.query);
+    const pass = results.some(r => r.sourcePath.toLowerCase().includes(tc.expectSourceContains));
+    console.log(`${pass ? "PASS" : "FAIL"}: "${tc.query}" -> top source: ${results[0]?.sourcePath}`);
+  }
 }
-console.log(`hit@${config.RETRIEVAL_TOP_K}: ${hits}/${cases.length}`);
-await pool.end();
+run();

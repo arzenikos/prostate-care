@@ -1,23 +1,19 @@
 import type { RetrievedChunk } from "./repository";
-import type { ChatMessage } from "./llm";
 
-const SYSTEM_PROMPT = `You answer questions using ONLY the numbered context passages provided.
-- If the context does not contain the answer, say so plainly. Do not guess.
-- Cite passages inline using their numbers, e.g. [1] or [2][3].
-- Be concise and use plain language.`;
-
-export function buildContext(chunks: RetrievedChunk[]): string {
-  return chunks
-    .map((c, i) => `[${i + 1}] (${c.source}, p.${c.page ?? "?"})\n${c.content}`)
-    .join("\n\n---\n\n");
+export function buildSystemPrompt(): string {
+  return [
+    "You are a health-information assistant answering questions using ONLY the provided context.",
+    "If the context does not contain the answer, say you don't have that information — never guess or use outside knowledge.",
+    "Cite sources inline like [1], [2] matching the numbered context blocks.",
+  ].join(" ");
 }
 
-export function buildMessages(question: string, chunks: RetrievedChunk[]): ChatMessage[] {
-  return [
-    { role: "system", content: SYSTEM_PROMPT },
-    {
-      role: "user",
-      content: `Context:\n${buildContext(chunks)}\n\nQuestion: ${question}`,
-    },
-  ];
+export function buildContextBlock(chunks: RetrievedChunk[]): string {
+  return chunks
+    .map((c, i) => `[${i + 1}] (${c.sourcePath}, p.${c.pageNumber ?? "?"})\n${c.content}`)
+    .join("\n\n");
+}
+
+export function buildUserPrompt(query: string, chunks: RetrievedChunk[]): string {
+  return `Context:\n${buildContextBlock(chunks)}\n\nQuestion: ${query}`;
 }
