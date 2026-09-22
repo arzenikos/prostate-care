@@ -141,15 +141,11 @@ git submodule update --init --recursive
 │       └── readme-tree.yaml
 ├── .gitignore
 ├── .gitmodules
-├── Dockerfile
 ├── README.md
 ├── astro.config.mjs
 ├── db
-│   └── init
-│       ├── 001-extensions.sql
-│       ├── 002-table.sql
-│       ├── 003-index.sql
-│       └── schema.sql
+│   └── migrations
+│       └── 0001_init.sql
 ├── desktop.ini
 ├── docker-compose.yaml
 ├── ollama-client.ts
@@ -261,6 +257,7 @@ git submodule update --init --recursive
 │   │   │   ├── messages.ts
 │   │   │   ├── pdf.ts
 │   │   │   ├── prompts.ts
+│   │   │   ├── rateLimit.ts
 │   │   │   ├── repository.ts
 │   │   │   └── retrieval.ts
 │   │   └── types
@@ -327,6 +324,6 @@ git submodule update --init --recursive
 ├── tree.bak
 └── tsconfig.json
 
-46 directories, 146 files
+46 directories, 143 files
 ```
 <!-- readme-tree end -->
