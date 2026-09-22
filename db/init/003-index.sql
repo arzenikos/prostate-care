@@ -1,1 +1,0 @@
-CREATE INDEX ON chunks USING hnsw (embedding vector_cosine_ops);
