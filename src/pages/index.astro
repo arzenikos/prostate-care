@@ -10,7 +10,7 @@ import { brand, landing } from '@contents/ui/site';
   <SplashScreen />
   <section class="landing">
     <div class="landing__brand">
-      <BrandMark size="lg" />
+      <BrandMark size="md" />
       <p class="te-reo">{brand.teReo}</p>
       <h1>{landing.heading}</h1>
       <p class="lead">{landing.instruction}</p>
@@ -40,7 +40,7 @@ import { brand, landing } from '@contents/ui/site';
   .landing {
     max-width: var(--content-width);
     margin: 0 auto;
-    padding: 0.5rem 1.5rem 4rem;
+    padding: 0rem 1.5rem 4rem;
     text-align: center;
   }
 
@@ -60,7 +60,7 @@ import { brand, landing } from '@contents/ui/site';
 
   h1 {
     margin: 0.3rem 0 0;
-    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-size: clamp(2rem, 2vw, 2.2rem);
     line-height: 1.15;
     color: var(--color-navy);
   }
@@ -68,7 +68,7 @@ import { brand, landing } from '@contents/ui/site';
   .lead {
     margin: 0;
     color: var(--color-text-muted);
-    font-size: clamp(2rem, 2vw, 1.2rem);
+    font-size: clamp(1.25rem, 1.8vw, 1.2rem);
     max-width: 50rem;
 
   }

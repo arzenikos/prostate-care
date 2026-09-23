@@ -1,22 +1,23 @@
 services:
   db:
-    image: arzenikos/pgvector:latest
-    container_name: prostate-care-db
+    image: pgvector/pgvector:pg18-trixie
+    container_name: pgvector_db_container
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: prostatecaredb
+      POSTGRES_DB: ${DB_NAME}
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql
       - ./db/init:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME}"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d prostatecaredb"]
       interval: 5s
       timeout: 3s
       retries: 10
+
   vectorizer-worker:
     image: timescale/pgai-vectorizer-worker:latest
     container_name: pgai-vectorizer-worker
@@ -25,14 +26,32 @@ services:
     environment:
       PGAI_VECTORIZER_WORKER_DB_URL: ${DATABASE_URL}
     restart: unless-stopped
+
   ollama:
     image: ollama/ollama:latest
-    container_name: prostate-care-ollama
+    container_name: pamana-ollama
     restart: unless-stopped
     ports:
       - "11434:11434"
     volumes:
       - ollama_models:/root/.ollama
+
+  ollama-pull:
+    image: ollama/ollama:latest
+    container_name: pamana-ollama-pull
+    depends_on:
+      - ollama
+    environment:
+      OLLAMA_HOST: ollama:11434
+    entrypoint: /bin/sh
+    command: >
+      -c "
+      until ollama list >/dev/null 2>&1; do sleep 1; done &&
+      ollama pull llama3.2:latest &&
+      ollama pull nomic-embed-text:latest
+      "
+
 volumes:
   pgdata:
+    name: prostate-care_pgdata
   ollama_models:

@@ -1,13 +1,13 @@
 ---
-import SimpleArticle from '@components/article/SimpleArticle.astro';
-import PlaceholderMedia from '@components/media/PlaceholderMedia.astro';
-import { content } from '@contents/users/c-stage-2.ts';
+import SimpleArticle from '@components/astro/article/SimpleArticle.astro';
+import PlaceholderMedia from '@components/astro/media/PlaceholderMedia.astro';
+// import { content } from '@contents/users/c-stage-2.ts';
 
-const heading = content['stage-2'].heading2.title;
-const main = content['stage-2'].heading2.main;
+// const heading = content['stage-2'].heading2.title;
+// const main = content['stage-2'].heading2.main;
 ---
 
-<SimpleArticle title={`Pamana | ${heading}`} heading={heading} illustration="Placeholder: kegel exercise illustration">
+<!-- <SimpleArticle title={`Pamana | ${heading}`} heading={heading} illustration="Placeholder: kegel exercise illustration">
   <h2>{main.KegelIntro.subheading}</h2>
   <p>{main.KegelIntro.description}</p>
   <PlaceholderMedia label="Placeholder: kegel exercise steps" />
@@ -17,4 +17,4 @@ const main = content['stage-2'].heading2.main;
     <li>Repeat: Do 10 reps, 2–3 times a day.</li>
     <li>Consistency matters: Do them daily for best results.</li>
   </ol>
-</SimpleArticle>
+</SimpleArticle> -->
