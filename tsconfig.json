@@ -15,7 +15,6 @@
             "@styles/*": ["./src/styles/*"],
             "@library/*": ["./src/lib/*"],
             "@contents/*": ["./src/content/*"]
-
         }
     }
 }
