@@ -68,6 +68,9 @@ const { persona = "patient" } = Astro.props;
   const rise = document.getElementById("prometheus-rise");
 
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let gestureStartY = 0;
+  let gestureStartX = 0;
+  let gestureActive = false;
 
   function openPanel() {
     backdrop?.classList.add("is-open");
@@ -99,7 +102,37 @@ const { persona = "patient" } = Astro.props;
   }
 
   toggle?.addEventListener("click", openPanel);
-  rise?.addEventListener("click", () => panel?.classList.add("is-tall"));
+  rise?.addEventListener("click", () => {
+    panel?.classList.remove("is-lifted");
+    panel?.classList.add("is-tall");
+  });
+
+  panel?.addEventListener("pointerdown", (event) => {
+    if (event.pointerType === "mouse" && event.button !== 0) return;
+    gestureStartY = event.clientY;
+    gestureStartX = event.clientX;
+    gestureActive = true;
+    panel.setPointerCapture?.(event.pointerId);
+  });
+
+  panel?.addEventListener("pointerup", (event) => {
+    if (!gestureActive) return;
+    gestureActive = false;
+
+    const deltaY = event.clientY - gestureStartY;
+    const deltaX = event.clientX - gestureStartX;
+    if (Math.abs(deltaY) < 60 || Math.abs(deltaY) < Math.abs(deltaX)) return;
+
+    if (deltaY < 0) {
+      panel.classList.add("is-lifted");
+    } else {
+      closePanel();
+    }
+  });
+
+  panel?.addEventListener("pointercancel", () => {
+    gestureActive = false;
+  });
 
   backdrop?.addEventListener("click", (e) => {
     if (e.target === backdrop) closePanel();
@@ -168,7 +201,12 @@ const { persona = "patient" } = Astro.props;
     padding: 2rem 3rem;
     display: flex;
     flex-direction: column;
+    touch-action: pan-y;
     transition: height 0.35s ease, bottom 0.35s ease;
+  }
+
+  .prometheus-panel.is-lifted {
+    height: 62%;
   }
 
   .prometheus-panel.is-generating {
@@ -183,7 +221,7 @@ const { persona = "patient" } = Astro.props;
   /* Top bar */
   .prometheus-rise {
     position: fixed;
-    top: calc(30% - 1.35rem);
+    bottom: calc(40% - 1.35rem);
     left: 50%;
     z-index: 2;
     display: none;
@@ -202,6 +240,11 @@ const { persona = "patient" } = Astro.props;
 
   .prometheus-backdrop:has(.prometheus-panel.is-generating) .prometheus-rise {
     display: flex;
+  }
+
+  .prometheus-backdrop:has(.prometheus-panel.is-lifted) .prometheus-rise {
+    display: flex;
+    bottom: calc(62% - 1.35rem);
   }
 
   .prometheus-backdrop:has(.prometheus-panel.is-tall) .prometheus-rise {
