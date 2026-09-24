@@ -27,11 +27,6 @@ const { persona = "patient" } = Astro.props;
 </div>
 
 <div id="prometheus-backdrop" class="prometheus-backdrop">
-  <button id="prometheus-rise" type="button" class="prometheus-rise" aria-label="Expand chat upward">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-      <path id="prometheus-rise-icon" d="m6 15 6-6 6 6" />
-    </svg>
-  </button>
   <div
     id="prometheus-panel"
     class="prometheus-panel"
@@ -39,6 +34,11 @@ const { persona = "patient" } = Astro.props;
     aria-modal="true"
     aria-label="Ask Prometheus AI"
   >
+    <button id="prometheus-rise" type="button" class="prometheus-rise" aria-label="Expand chat upward">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path id="prometheus-rise-icon" d="m6 15 6-6 6 6" />
+      </svg>
+    </button>
 
     <!-- Identity — fully static, no interactivity needed -->
     <div class="prometheus-identity">
@@ -209,7 +209,7 @@ const { persona = "patient" } = Astro.props;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     background: color-mix(in srgb, var(--color-navy-deep) 96%, var(--color-navy) 4%);
     border: 1px solid color-mix(in srgb, var(--color-surface) 14%, transparent);
-    padding: 2rem 3rem;
+    padding: 3.5rem 3rem 1.5rem;
     display: flex;
     flex-direction: column;
     touch-action: none;
@@ -236,8 +236,8 @@ const { persona = "patient" } = Astro.props;
 
   /* Top bar */
   .prometheus-rise {
-    position: fixed;
-    bottom: calc(40% - 1.35rem);
+    position: absolute;
+    top: 0.75rem;
     left: 50%;
     z-index: 2;
     display: none;
@@ -254,26 +254,8 @@ const { persona = "patient" } = Astro.props;
     cursor: pointer;
   }
 
-  .prometheus-backdrop:has(.prometheus-panel.is-generating) .prometheus-rise {
+  .prometheus-rise {
     display: flex;
-    bottom: calc(62% - 1.35rem);
-  }
-
-  .prometheus-backdrop.is-open .prometheus-rise {
-    display: flex;
-  }
-
-  .prometheus-backdrop:has(.prometheus-panel.is-lifted) .prometheus-rise {
-    display: flex;
-    bottom: calc(62% - 1.35rem);
-  }
-
-  .prometheus-backdrop:has(.prometheus-panel.is-tall) .prometheus-rise {
-    bottom: calc(100vh - var(--header-height) - 1rem - 1.35rem);
-  }
-
-  .prometheus-backdrop:has(.prometheus-panel.is-collapsed) .prometheus-rise {
-    bottom: calc(40% - 1.35rem);
   }
 
   /* Identity block */

@@ -190,9 +190,9 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
   }
 
   return (
-    <>
+    <div className="flex h-full min-h-0 flex-col">
       {messages.length === 0 && !loading && (
-        <div className="px-6 pb-3">
+        <div className="mt-auto shrink-0 px-6 pb-3">
           <p className="text-[13px] mb-3 text-center" style={{ color: CREAM_DIM }}>
             Start with a question about prostate cancer, treatment, or support.
           </p>
@@ -290,7 +290,7 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
       )}
 
       {/* Input bar */}
-      <div className="shrink-0 pb-7 pt-2">
+      <div className="mt-auto shrink-0 px-2 pb-2 pt-3">
         <div className="flex flex-col rounded-xl px-4 py-5.5" style={{ background: CREAM }}>
           <input
             ref={inputRef}
@@ -371,6 +371,6 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
           ))}
         </div>
       )}
-    </>
+    </div>
   );
 }
