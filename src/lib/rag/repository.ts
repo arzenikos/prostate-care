@@ -2,14 +2,17 @@ import { pool, toVectorLiteral } from "./db";
 import type { Chunk } from "./chunking";
 
 export async function findDocumentByPath(sourcePath: string) {
+  console.log(`[DEBUG at repository.ts] Finding document by path: ${sourcePath}`);
   const { rows } = await pool.query(
     `SELECT id, content_hash FROM documents WHERE source_path = $1`,
     [sourcePath]
   );
+  console.log(`[DEBUG at repository.ts] Found document:`, rows[0]);
   return rows[0] as { id: string; content_hash: string } | undefined;
 }
 
 export async function upsertDocument(sourcePath: string, contentHash: string, title: string) {
+  console.log(`[DEBUG at repository.ts] Upserting document: ${sourcePath}`);
   const { rows } = await pool.query(
     `INSERT INTO documents (source_path, content_hash, title)
      VALUES ($1, $2, $3)
@@ -17,10 +20,12 @@ export async function upsertDocument(sourcePath: string, contentHash: string, ti
      RETURNING id`,
     [sourcePath, contentHash, title]
   );
+  console.log(`[DEBUG at repository.ts] Upserted document:`, rows[0]);
   return rows[0].id as string;
 }
 
 export async function deleteChunksForDocument(documentId: string) {
+  console.log(`[DEBUG at repository.ts] Deleting chunks for document: ${documentId}`);
   await pool.query(`DELETE FROM chunks WHERE document_id = $1`, [documentId]);
 }
 
@@ -29,6 +34,7 @@ export async function insertChunk(
   chunk: Chunk,
   embedding: number[]
 ) {
+  console.log(`[DEBUG at repository.ts] Inserting chunk for document: ${documentId}, chunkIndex: ${chunk.chunkIndex}`);
   await pool.query(
     `INSERT INTO chunks (document_id, chunk_index, page_number, content, embedding)
      VALUES ($1, $2, $3, $4, $5::vector)`,

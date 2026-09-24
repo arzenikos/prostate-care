@@ -8,12 +8,12 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
     ports:
-      - "5432:5432"
+      - "${DB_HOST_PORT:-5433}:5432"
     volumes:
       - pgdata:/var/lib/postgresql
       - ./db/init:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d prostatecaredb"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_NAME}"]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -24,7 +24,7 @@ services:
     depends_on:
       - db
     environment:
-      PGAI_VECTORIZER_WORKER_DB_URL: ${DATABASE_URL}
+      PGAI_VECTORIZER_WORKER_DB_URL: "postgresql://${DB_USERNAME}:${DB_PASSWORD}@db:5432/${DB_NAME}"
     restart: unless-stopped
 
   ollama:
@@ -53,5 +53,4 @@ services:
 
 volumes:
   pgdata:
-    name: prostate-care_pgdata
   ollama_models:
