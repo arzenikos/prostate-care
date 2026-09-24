@@ -210,15 +210,15 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
       )}
 
       {/* Input bar */}
-      <div className="px-4 pb-4 pt-2">
-        <div className="flex flex-col rounded-xl px-4 py-3.5" style={{ background: CREAM }}>
+      <div className="pb-7 pt-2">
+        <div className="flex flex-col rounded-xl px-4 py-5.5" style={{ background: CREAM }}>
           <input
             ref={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
             placeholder="A whole new way to work."
-            className="bg-transparent outline-none text-[13px] mb-2"
+            className="bg-transparent outline-none text-[13px] mb-10"
             style={{ color: NAVY_DEEP }}
             disabled={loading}
           />
