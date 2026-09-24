@@ -47,12 +47,19 @@ export interface RetrievedChunk {
   pageNumber: number | null;
   sourcePath: string;
   similarity: number;
+  source: "pdf" | "web";
+  url?: string;
 }
 
 export async function retrieveSimilarChunks(
   queryEmbedding: number[],
   topK: number
 ): Promise<RetrievedChunk[]> {
+  if (queryEmbedding.length === 0) {
+    throw new Error(
+      "retrieveSimilarChunks: embedding must have at least 1 dimension (got an empty array — check the embedding model/prompt upstream)"
+    );
+  }
   const { rows } = await pool.query(
     `SELECT c.content, c.page_number, d.source_path,
             1 - (c.embedding <=> $1::vector) AS similarity
@@ -67,5 +74,7 @@ export async function retrieveSimilarChunks(
     pageNumber: r.page_number,
     sourcePath: r.source_path,
     similarity: r.similarity,
+    source: "pdf" as const,
+    url: r.source_path.startsWith("http") ? r.source_path : undefined
   }));
 }

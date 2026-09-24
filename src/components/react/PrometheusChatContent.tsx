@@ -28,6 +28,7 @@ interface Source {
   slug: string;
   title: string;
   heading: string;
+  url?: string;
 }
 
 interface Props {
@@ -279,9 +280,14 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
               <p className="text-[11px] leading-snug" style={{ color: CREAM }}>
                 {s.title}
               </p>
-              <p className="text-[11px] mt-0.5" style={{ color: ACCENT }}>
-                {s.heading}
-              </p>
+              {s.url ? (
+                <a href={s.url} target="_blank" rel="noopener noreferrer" style={{ color: ACCENT }}>
+                  {s.url}
+                </a>
+              ) : (
+                <p style={{ color: ACCENT }}>{s.heading}</p>
+              )}
+              
             </div>
           ))}
         </div>

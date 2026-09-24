@@ -17,7 +17,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     return new Response(MESSAGES.noContext, { status: 200 });
   }
 
-  const systemPrompt = buildSystemPrompt();
+  const systemPrompt = buildSystemPrompt(chunks);
   const userPrompt = buildUserPrompt(question, chunks);
   const sources = chunks.map(c => `${c.sourcePath}#p${c.pageNumber}`).join(",");
 

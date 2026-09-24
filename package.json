@@ -11,6 +11,7 @@
     "astro": "astro",
     "initasset": "cp -r src/assets/ public/assets/",
     "ollama-setup": "docker compose up -d && docker exec prostate-care-ollama ollama pull nomic-embed-text && docker exec prostate-care-ollama ollama pull qwen3.5:9b",
+    "embed": "node scripts/embed.mjs",
     "ingest": "tsx --env-file=.env src/scripts/ingest.ts",
     "search": "tsx --env-file=.env src/scripts/search.ts",
     "eval": "tsx --env-file=.env src/scripts/eval.ts",
