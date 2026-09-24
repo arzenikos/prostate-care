@@ -1,15 +1,31 @@
 ---
 import { getCollection, render } from 'astro:content';
+import ArticleLayout from '@layouts/ArticleLayout.astro';
 
 export async function getStaticPaths() {
-  const papers = await getCollection('journals');
+  const papers = await getCollection('researchers', ({ data }) => !data.draft);
 
   return papers.map((paper) => ({
-    params: { slug: paper.id },   // ← "pharmacokinetics-of-abiraterone"
-    props: { paper },              // ← pass the whole entry through
+    params: { slug: paper.id },
+    props: { paper },
   }));
 }
 
 const { paper } = Astro.props;
-const { Content } = await render(paper); // renders the markdown body
+const { Content } = await render(paper);
+const heading = paper.data.heading ?? paper.data.title;
 ---
+
+<ArticleLayout
+  title={`Pamana | ${paper.data.title}`}
+  heading={heading}
+  hub="research"
+  illustration={paper.data.illustration}
+  breadcrumbs={[
+    { label: 'Home', href: '/' },
+    { label: 'Research & Student Hub', href: '/researcher-hub' },
+    { label: heading },
+  ]}
+>
+  <Content />
+</ArticleLayout>

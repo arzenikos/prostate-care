@@ -1,0 +1,35 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import ArticleLayout from '@layouts/ArticleLayout.astro';
+
+export async function getStaticPaths() {
+  const articles = await getCollection('patient', ({ data }) => !data.draft);
+
+  return articles.map((article) => ({
+    params: { slug: article.id },
+    props: { article },
+  }));
+}
+
+interface Props {
+  article: CollectionEntry<'patient'>;
+}
+
+const { article } = Astro.props;
+const { Content } = await render(article);
+const heading = article.data.heading ?? article.data.title;
+---
+
+<ArticleLayout
+  title={`Pamana | ${article.data.title}`}
+  heading={heading}
+  hub="patient"
+  illustration={article.data.illustration}
+  breadcrumbs={[
+    { label: 'Home', href: '/' },
+    { label: 'Navigating Your Diagnosis', href: '/patient-space' },
+    { label: heading },
+  ]}
+>
+  <Content />
+</ArticleLayout>
