@@ -1,12 +1,37 @@
 ---
+import { getCollection } from 'astro:content';
 import Layout from '@layouts/Layout.astro';
 import HubHero from '@components/astro/hero/HubHero.astro';
 import StageAccordion from '@components/astro/accordion/StageAccordion.astro';
 import { hubs } from '@contents/ui/site';
-import { patientSections } from '@contents/ui/article-paths';
+import type { PathSection } from '@contents/ui/article-paths';
 
 const copy = hubs.patient;
 const openId = Astro.url.searchParams.get('stage') ?? '';
+const articles = await getCollection('patient', ({ data }) => !data.draft);
+const stageOrder = ['stage-0', 'stage-1', 'stage-2', 'stage-3', 'stage-4'];
+const stageSections: PathSection[] = stageOrder
+  .map((stage) => {
+    const stageArticles = articles
+      .filter((article) => (article.data.stage ?? article.id.split('/')[0]) === stage)
+      .sort((a, b) => a.data.title.localeCompare(b.data.title));
+
+    return {
+      id: stage,
+      title: stage === 'stage-0'
+        ? 'Prostate cancer basics, tests, recurrence, & support'
+        : `${stage.replace('-', ' ').replace(/\b\w/g, (letter) => letter.toUpperCase())}: Information and support`,
+      groups: [{
+        title: '',
+        cards: stageArticles.map((article) => ({
+          label: article.data.title,
+          href: article.id,
+          iconLabel: article.data.illustration ?? 'Patient article',
+        })),
+      }],
+    };
+  })
+  .filter((section) => section.groups[0].cards.length > 0);
 ---
 
 <Layout title="Patient Support Hub" hub="patient">
@@ -18,7 +43,7 @@ const openId = Astro.url.searchParams.get('stage') ?? '';
   />
   <section class="patient-path">
     <h6>{copy.prompt}</h6>
-    <StageAccordion sections={patientSections} openId={openId} />
+    <StageAccordion sections={stageSections} openId={openId} />
   </section>
 </Layout>
 
