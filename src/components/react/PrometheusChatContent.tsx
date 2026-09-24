@@ -81,6 +81,7 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
     setShowSource(false);
     setError(null);
     setLoading(true);
+    window.dispatchEvent(new CustomEvent("prometheus:generating"));
 
     const controller = new AbortController();
     abortRef.current = controller;
@@ -124,6 +125,7 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
       }
     } finally {
       setLoading(false);
+      window.dispatchEvent(new CustomEvent("prometheus:generated"));
     }
   }
 
@@ -158,11 +160,21 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
   return (
     <>
       {(question || loading) && (
-        <div className="px-6 pb-2 max-h-[42vh] overflow-y-auto">
+        <div className="prometheus-conversation px-6 pb-2 max-h-[42vh] overflow-y-auto">
+          {question && (
+            <div className="flex justify-end mb-3">
+              <p className="max-w-[78%] rounded-2xl rounded-br-md px-4 py-2.5 text-[13px] leading-relaxed" style={{ background: ACCENT, color: NAVY_DEEP }}>
+                {question}
+              </p>
+            </div>
+          )}
+
           {loading && !answer && (
-            <div className="flex items-center gap-2 py-2" style={{ color: CREAM_DIM }}>
+            <div className="flex justify-start mb-3">
+              <div className="max-w-[78%] rounded-2xl rounded-bl-md px-4 py-2.5 flex items-center gap-2" style={{ background: NAVY, color: CREAM_DIM }}>
               <Loader2 size={14} className="animate-spin" />
               <span className="text-[13px]">Thinking…</span>
+              </div>
             </div>
           )}
 
@@ -172,7 +184,13 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
             </p>
           )}
 
-          {answer && renderAnswer(answer)}
+          {answer && (
+            <div className="flex justify-start mb-3">
+              <div className="max-w-[78%] rounded-2xl rounded-bl-md px-4 py-2.5" style={{ background: NAVY, color: CREAM }}>
+                {renderAnswer(answer)}
+              </div>
+            </div>
+          )}
 
           {sources.length > 0 && (
             <button
