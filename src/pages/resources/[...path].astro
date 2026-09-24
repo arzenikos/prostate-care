@@ -1,0 +1,134 @@
+---
+import fs from "node:fs";
+import path from "node:path";
+import { extractPages } from "@rag-library/pdf";
+import Layout from "@layouts/Layout.astro";
+
+const resourceRoot = path.resolve(process.cwd(), "public", "assets", "website-knowledge");
+const requestedPath = Astro.params.path;
+const relativePath = requestedPath
+  ?.split("/")
+  .map(segment => decodeURIComponent(segment))
+  .join(path.sep);
+
+if (!relativePath || relativePath.includes("..") || !relativePath.toLowerCase().endsWith(".pdf")) {
+  return Astro.redirect("/", 404);
+}
+
+const pdfPath = path.resolve(resourceRoot, relativePath);
+const relativeToRoot = path.relative(resourceRoot, pdfPath);
+if (relativeToRoot.startsWith("..") || path.isAbsolute(relativeToRoot) || !fs.existsSync(pdfPath)) {
+  return Astro.redirect("/", 404);
+}
+
+const pages = await extractPages(pdfPath);
+const pdfUrl = `/assets/website-knowledge/${relativeToRoot
+  .split(path.sep)
+  .map(segment => encodeURIComponent(segment))
+  .join("/")}`;
+const title = path.basename(pdfPath, ".pdf");
+---
+
+<Layout title={title} description={`Readable source document: ${title}`}>
+  <main class="resource-page">
+    <a class="back-link" href="/patient-space">← Back to support resources</a>
+    <header>
+      <p class="eyebrow">Source document</p>
+      <h1>{title}</h1>
+      <a class="pdf-link" href={pdfUrl} target="_blank" rel="noopener noreferrer">
+        Open original PDF
+      </a>
+    </header>
+
+    <div class="resource-grid">
+      <section class="extracted" aria-label="Extracted document text">
+        {pages.map((page) => (
+          <article>
+            <h2>Page {page.pageNumber}</h2>
+            <p>{page.text}</p>
+          </article>
+        ))}
+      </section>
+      <aside>
+        <iframe title={`PDF preview of ${title}`} src={pdfUrl} />
+      </aside>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .resource-page {
+    max-width: var(--content-width);
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  .back-link,
+  .pdf-link {
+    color: var(--color-blue);
+    font-weight: 650;
+  }
+
+  header {
+    margin: 2rem 0;
+  }
+
+  .eyebrow {
+    color: var(--color-blue);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin: 0.5rem 0 1rem;
+    color: var(--color-navy-deep);
+  }
+
+  .resource-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 0.7fr);
+    gap: 2rem;
+  }
+
+  .extracted article {
+    padding: 1.25rem 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .extracted h2 {
+    margin: 0 0 0.6rem;
+    color: var(--color-navy);
+    font-size: 1rem;
+  }
+
+  .extracted p {
+    white-space: pre-wrap;
+    color: var(--color-text-muted);
+    line-height: 1.7;
+  }
+
+  aside {
+    position: sticky;
+    top: 1rem;
+    height: 75vh;
+  }
+
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+  }
+
+  @media (max-width: 800px) {
+    .resource-grid {
+      grid-template-columns: 1fr;
+    }
+
+    aside {
+      position: static;
+      height: 70vh;
+    }
+  }
+</style>

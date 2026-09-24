@@ -276,9 +276,15 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
                   className="rounded-lg px-3 py-2.5"
                   style={{ background: NAVY_DEEP, border: `1px solid ${HAIRLINE}` }}
                 >
-                  <p className="text-[11px] leading-snug" style={{ color: CREAM }}>
-                    {s.title}
-                  </p>
+                  {s.url ? (
+                    <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-[11px] leading-snug underline" style={{ color: CREAM }}>
+                      {s.title}
+                    </a>
+                  ) : (
+                    <p className="text-[11px] leading-snug" style={{ color: CREAM }}>
+                      {s.title}
+                    </p>
+                  )}
                   <p className="text-[11px] mt-0.5" style={{ color: ACCENT }}>
                     {s.heading}
                   </p>
@@ -356,9 +362,15 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
               className="px-3 py-2.5"
               style={{ borderTop: i > 0 ? `1px solid ${HAIRLINE}` : "none" }}
             >
-              <p className="text-[11px] leading-snug" style={{ color: CREAM }}>
-                {s.title}
-              </p>
+              {s.url ? (
+                <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-[11px] leading-snug underline" style={{ color: CREAM }}>
+                  {s.title}
+                </a>
+              ) : (
+                <p className="text-[11px] leading-snug" style={{ color: CREAM }}>
+                  {s.title}
+                </p>
+              )}
               {s.url ? (
                 <a href={s.url} target="_blank" rel="noopener noreferrer" style={{ color: ACCENT }}>
                   {s.url}

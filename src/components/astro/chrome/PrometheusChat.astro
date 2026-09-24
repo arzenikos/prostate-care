@@ -71,8 +71,10 @@ const { persona = "patient" } = Astro.props;
   let gestureStartY = 0;
   let gestureStartX = 0;
   let gestureActive = false;
+  let isExpanded = false;
 
   function openPanel() {
+    setExpandedState(false);
     backdrop?.classList.add("is-open");
     toggleContainer?.classList.add("is-hidden");
     document.body.style.overflow = "hidden";
@@ -94,7 +96,8 @@ const { persona = "patient" } = Astro.props;
   function closePanel() {
     backdrop?.classList.remove("is-open");
     toggleContainer?.classList.remove("is-hidden");
-    panel?.classList.remove("is-tall", "is-lifted", "is-collapsed", "is-generating");
+    panel?.classList.remove("is-tall", "is-lifted", "is-generating");
+    setExpandedState(false);
     document.body.style.overflow = "";
     // lets the island clear its answer/sources so reopening starts fresh
     window.dispatchEvent(new CustomEvent("prometheus:closed"));
@@ -102,18 +105,26 @@ const { persona = "patient" } = Astro.props;
   }
 
   toggle?.addEventListener("click", openPanel);
-  rise?.addEventListener("click", () => {
-    if (!panel) return;
-    const expanded = panel.classList.contains("is-tall");
-    panel.classList.toggle("is-tall", !expanded);
-    panel.classList.toggle("is-lifted", !expanded);
-    panel.classList.toggle("is-collapsed", expanded);
-    rise.setAttribute("aria-label", expanded ? "Expand chat upward" : "Collapse chat panel");
-    rise.setAttribute("aria-expanded", String(!expanded));
+  function setExpandedState(expanded: boolean) {
+    if (!panel || !rise) return;
+    isExpanded = expanded;
+    panel.classList.toggle("is-tall", expanded);
+    panel.classList.toggle("is-lifted", expanded);
+    panel.classList.toggle("is-collapsed", !expanded);
+    rise.setAttribute("aria-label", expanded ? "Collapse chat panel" : "Expand chat upward");
+    rise.setAttribute("aria-expanded", String(expanded));
     document.getElementById("prometheus-rise-icon")?.setAttribute(
       "d",
-      expanded ? "m6 15 6-6 6 6" : "m6 9 6 6 6-6",
+      expanded ? "m6 9 6 6 6-6" : "m6 15 6-6 6 6",
     );
+  }
+
+  rise?.addEventListener("click", () => {
+    setExpandedState(!isExpanded);
+  });
+
+  rise?.addEventListener("pointerdown", (event) => {
+    event.stopPropagation();
   });
 
   panel?.addEventListener("pointerdown", (event) => {
@@ -133,8 +144,7 @@ const { persona = "patient" } = Astro.props;
     if (Math.abs(deltaY) < 60 || Math.abs(deltaY) < Math.abs(deltaX)) return;
 
     if (deltaY < 0) {
-      panel.classList.remove("is-collapsed");
-      panel.classList.add("is-lifted");
+      setExpandedState(true);
     } else {
       closePanel();
     }
@@ -204,7 +214,7 @@ const { persona = "patient" } = Astro.props;
     width: 80%;
     height: 40%;
     max-height: calc(100vh - var(--header-height) - 1rem);
-    border-radius: 1rem;
+    border-radius: 1rem 1rem 0 0;
     overflow: hidden;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     background: color-mix(in srgb, var(--color-navy-deep) 96%, var(--color-navy) 4%);

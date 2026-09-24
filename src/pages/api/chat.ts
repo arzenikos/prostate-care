@@ -5,6 +5,20 @@ import { streamChat } from "@rag-library/llm";
 import { checkRateLimit } from "@rag-library/rateLimit";
 import { MESSAGES } from "@rag-library/messages";
 import { config } from "@rag-library/config";
+import path from "node:path";
+
+function sourcePageUrl(sourcePath: string): string | undefined {
+  if (sourcePath.startsWith("http")) return sourcePath;
+
+  const root = path.resolve(process.cwd(), "public", "assets", "website-knowledge");
+  const relativePath = path.relative(root, path.resolve(sourcePath));
+  if (relativePath.startsWith("..") || path.isAbsolute(relativePath)) return undefined;
+
+  return `/resources/${relativePath
+    .split(path.sep)
+    .map(segment => encodeURIComponent(segment))
+    .join("/")}`;
+}
 
 export const POST: APIRoute = async ({ request, clientAddress }) => {
   const startedAt = performance.now();
@@ -40,7 +54,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     slug: `${chunk.sourcePath}-${chunk.pageNumber ?? index}`,
     title: chunk.sourcePath,
     heading: chunk.pageNumber ? `Page ${chunk.pageNumber}` : "Web resource",
-    url: chunk.url,
+    url: chunk.url ?? sourcePageUrl(chunk.sourcePath),
   }))));
 
   const stream = new ReadableStream({
