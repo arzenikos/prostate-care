@@ -211,7 +211,7 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
 
       {/* Input bar */}
       <div className="px-4 pb-4 pt-2">
-        <div className="flex flex-col rounded-xl px-4 py-2.5" style={{ background: CREAM }}>
+        <div className="flex flex-col rounded-xl px-4 py-3.5" style={{ background: CREAM }}>
           <input
             ref={inputRef}
             value={input}

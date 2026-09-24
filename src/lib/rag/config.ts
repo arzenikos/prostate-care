@@ -1,28 +1,48 @@
-import { z } from "zod";
+import dotenv from "dotenv";
+import path from "path";
 
-const schema = z.object({
-  DATABASE_URL: z.string().url(),
-  PDF_SOURCE_DIR: z.string().min(1),
-  OLLAMA_BASE_URL: z.string().url(),
+const result = dotenv.config({ path: path.resolve(process.cwd(), ".env") });
 
-  EMBEDDING_MODEL: z.string().min(1),
-  EMBEDDING_DIMENSIONS: z.coerce.number().int().positive(),
-  EMBEDDING_DOCUMENT_PREFIX: z.string().default(""),
-  EMBEDDING_QUERY_PREFIX: z.string().default(""),
-  EMBEDDING_BATCH_SIZE: z.coerce.number().int().positive().default(16),
+console.log(
+  `[DEBUG at config.ts] dotenv loaded from ${path.resolve(process.cwd(), ".env")} — ` +
+  (result.error ? `FAILED: ${result.error.message}` : "OK")
+);
 
-  CHUNK_SIZE_TOKENS: z.coerce.number().int().positive().default(1500),
-  CHUNK_OVERLAP_TOKENS: z.coerce.number().int().nonnegative().default(200),
+function requireEnv(key: string): string {
+  const value = process.env[key];
+  if (!value) throw new Error(`Missing required env var: ${key}`);
+  return value;
+}
 
-  CHAT_MODEL: z.string().min(1),
-  RETRIEVAL_TOP_K: z.coerce.number().int().positive().default(5),
-  RETRIEVAL_MIN_SCORE: z.coerce.number().min(0).max(1).default(0.3),
-  MAX_QUESTION_LENGTH: z.coerce.number().int().positive().default(1000),
-});
+function numEnv(key: string, fallback?: number): number {
+  const raw = process.env[key];
+  if (raw === undefined) {
+    if (fallback === undefined) throw new Error(`Missing required env var: ${key}`);
+    return fallback;
+  }
+  const n = Number(raw);
+  if (Number.isNaN(n)) throw new Error(`Env var ${key} is not a valid number: "${raw}"`);
+  return n;
+}
 
-// Works in both contexts: tsx (process.env via --env-file) and Astro
-// (import.meta.env in dev, process.env in the built server).
-const viteEnv = (import.meta as { env?: Record<string, string | undefined> }).env ?? {};
+export const config = {
+  DATABASE_URL: requireEnv("DATABASE_URL"),
+  PDF_SOURCE_DIR: requireEnv("PDF_SOURCE_DIR"),
+  OLLAMA_BASE_URL: requireEnv("OLLAMA_BASE_URL"),
 
-export const config = schema.parse({ ...process.env, ...viteEnv });
+  EMBEDDING_MODEL: requireEnv("EMBEDDING_MODEL"),
+  EMBEDDING_DIMENSIONS: numEnv("EMBEDDING_DIMENSIONS"),
+  EMBEDDING_DOCUMENT_PREFIX: process.env.EMBEDDING_DOCUMENT_PREFIX ?? "",
+  EMBEDDING_QUERY_PREFIX: process.env.EMBEDDING_QUERY_PREFIX ?? "",
+  EMBEDDING_BATCH_SIZE: numEnv("EMBEDDING_BATCH_SIZE", 16),
+
+  CHUNK_SIZE_TOKENS: numEnv("CHUNK_SIZE_TOKENS", 1500),
+  CHUNK_OVERLAP_TOKENS: numEnv("CHUNK_OVERLAP_TOKENS", 200),
+
+  CHAT_MODEL: requireEnv("CHAT_MODEL"),
+  RETRIEVAL_TOP_K: numEnv("RETRIEVAL_TOP_K", 5),
+  RETRIEVAL_MIN_SCORE: numEnv("RETRIEVAL_MIN_SCORE", 0.3),
+  MAX_QUESTION_LENGTH: numEnv("MAX_QUESTION_LENGTH", 1000),
+};
+
 export type Config = typeof config;

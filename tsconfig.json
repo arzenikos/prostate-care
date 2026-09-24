@@ -16,7 +16,6 @@
             "@library/*": ["./src/lib/*"],
             "@rag-library/*": ["./src/lib/rag/*"],
             "@contents/*": ["./src/content/*"]
-
         }
     }
 }
