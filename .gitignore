@@ -79,5 +79,6 @@ functions/*.map
 
 # Assets
 public/assets/
+db/**/*
 
 
