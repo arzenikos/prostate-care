@@ -1,6 +1,8 @@
 ---
+import Layout from '@layouts/Layout.astro';
 import Canvas from '@components/astro/media/Canvas.astro';
 
+const title = "Blue Node";
 interface CanvasNode {
     id: string;
     title: string;
@@ -42,6 +44,8 @@ const edges: [string, string][] = [
 ];
 
 ---
+<Layout title={title}>
 
-<Canvas nodes={nodes} edges={edges} currentPath={Astro.url.pathname} height="100vh" />
-  
+    <Canvas nodes={nodes} edges={edges} currentPath={Astro.url.pathname} height="100vh" />
+
+</Layout>
