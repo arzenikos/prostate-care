@@ -27,36 +27,38 @@ const { persona = "patient" } = Astro.props;
 </div>
 
 <div id="prometheus-backdrop" class="prometheus-backdrop">
-  <div
-    id="prometheus-panel"
-    class="prometheus-panel"
-    role="dialog"
-    aria-modal="true"
-    aria-label="Ask Prometheus AI"
-  >
+  <div id="prometheus-panel-shell" class="prometheus-panel-shell">
     <button id="prometheus-rise" type="button" class="prometheus-rise" aria-label="Expand chat upward">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         <path id="prometheus-rise-icon" d="m6 15 6-6 6 6" />
       </svg>
     </button>
 
-    <!-- Identity — fully static, no interactivity needed -->
-    <div class="prometheus-identity">
-      <div class="prometheus-icon-circle">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8B93F8" stroke-width="2">
-          <rect x="3" y="8" width="18" height="12" rx="2" />
-          <circle cx="8.5" cy="14" r="1.2" fill="#8B93F8" />
-          <circle cx="15.5" cy="14" r="1.2" fill="#8B93F8" />
-          <path d="M12 8V4M9 4h6" stroke-linecap="round" />
-        </svg>
+    <div
+      id="prometheus-panel"
+      class="prometheus-panel"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Ask Prometheus AI"
+    >
+      <!-- Identity — fully static, no interactivity needed -->
+      <div class="prometheus-identity">
+        <div class="prometheus-icon-circle">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8B93F8" stroke-width="2">
+            <rect x="3" y="8" width="18" height="12" rx="2" />
+            <circle cx="8.5" cy="14" r="1.2" fill="#8B93F8" />
+            <circle cx="15.5" cy="14" r="1.2" fill="#8B93F8" />
+            <path d="M12 8V4M9 4h6" stroke-linecap="round" />
+          </svg>
+        </div>
+        <p class="prometheus-title">
+          Ask Prometheus AI
+        </p>
       </div>
-      <p class="prometheus-title">
-        Ask Prometheus AI
-      </p>
-    </div>
 
-    <!-- Everything below needs real state: mounted as a React island -->
-    <PrometheusChatContent client:load persona={persona} />
+      <!-- Everything below needs real state: mounted as a React island -->
+      <PrometheusChatContent client:load persona={persona} />
+    </div>
   </div>
 </div>
 
@@ -64,6 +66,7 @@ const { persona = "patient" } = Astro.props;
   const toggleContainer = document.getElementById("prometheus-toggle-container");
   const toggle = document.getElementById("prometheus-toggle");
   const backdrop = document.getElementById("prometheus-backdrop");
+  const shell = document.getElementById("prometheus-panel-shell");
   const panel = document.getElementById("prometheus-panel");
   const rise = document.getElementById("prometheus-rise");
 
@@ -96,7 +99,7 @@ const { persona = "patient" } = Astro.props;
   function closePanel() {
     backdrop?.classList.remove("is-open");
     toggleContainer?.classList.remove("is-hidden");
-    panel?.classList.remove("is-tall", "is-lifted", "is-generating");
+    shell?.classList.remove("is-tall", "is-lifted", "is-generating");
     setExpandedState(false);
     document.body.style.overflow = "";
     // lets the island clear its answer/sources so reopening starts fresh
@@ -108,9 +111,9 @@ const { persona = "patient" } = Astro.props;
   function setExpandedState(expanded: boolean) {
     if (!panel || !rise) return;
     isExpanded = expanded;
-    panel.classList.toggle("is-tall", expanded);
-    panel.classList.toggle("is-lifted", expanded);
-    panel.classList.toggle("is-collapsed", !expanded);
+    shell.classList.toggle("is-tall", expanded);
+    shell.classList.toggle("is-lifted", expanded);
+    shell.classList.toggle("is-collapsed", !expanded);
     rise.setAttribute("aria-label", expanded ? "Collapse chat panel" : "Expand chat upward");
     rise.setAttribute("aria-expanded", String(expanded));
     document.getElementById("prometheus-rise-icon")?.setAttribute(
@@ -163,10 +166,10 @@ const { persona = "patient" } = Astro.props;
   });
 
   window.addEventListener("prometheus:generating", () => {
-    panel?.classList.add("is-generating");
+    shell?.classList.add("is-generating");
   });
   window.addEventListener("prometheus:generated", () => {
-    panel?.classList.remove("is-generating");
+    shell?.classList.remove("is-generating");
   });
 </script>
 
@@ -207,53 +210,56 @@ const { persona = "patient" } = Astro.props;
   }
 
   /* Panel */
-  .prometheus-panel {
+  .prometheus-panel-shell {
     position: fixed;
     left: 10%;
     bottom: 0;
     width: 80%;
-    height: 40%;
+    height: 30%;
     max-height: calc(100vh - var(--header-height) - 1rem);
+    transition: height 0.35s ease;
+  }
+
+  .prometheus-panel {
+    position: absolute;
+    inset: 0;
     border-radius: 1rem 1rem 0 0;
     overflow: hidden;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     background: color-mix(in srgb, var(--color-navy-deep) 96%, var(--color-navy) 4%);
     border: 1px solid color-mix(in srgb, var(--color-surface) 14%, transparent);
-    padding: 3.5rem 3rem 1.5rem;
+    padding: 3.5rem 3rem 3.5rem;
     display: flex;
     flex-direction: column;
     touch-action: none;
-    transition: height 0.35s ease, bottom 0.35s ease;
   }
 
-  .prometheus-panel.is-lifted {
-    height: 62%;
+  .prometheus-panel-shell.is-lifted {
+    height: 70%;
   }
 
-  .prometheus-panel.is-generating {
-    height: 62%;
+  .prometheus-panel-shell.is-generating {
+    height: 70%;
   }
 
-  .prometheus-panel.is-tall {
-    bottom: calc(var(--header-height) + 0.5rem);
+  .prometheus-panel-shell.is-tall {
     height: calc(100vh - var(--header-height) - 1rem);
   }
 
-  .prometheus-panel.is-collapsed {
-    bottom: 0 !important;
-    height: 40% !important;
+  .prometheus-panel-shell.is-collapsed {
+    height: 45% !important;
   }
 
   /* Top bar */
   .prometheus-rise {
     position: absolute;
-    top: 0.75rem;
+    top: 0;
     left: 50%;
     z-index: 2;
     display: none;
-    width: 2.25rem;
-    height: 2.25rem;
-    transform: translateX(-50%);
+    width: 4rem;
+    height: 4rem;
+    transform: translate(-50%, -50%);
     align-items: center;
     justify-content: center;
     border: 1px solid color-mix(in srgb, var(--color-surface) 18%, transparent);

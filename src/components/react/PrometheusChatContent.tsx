@@ -297,7 +297,7 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
 
       {/* Input bar */}
       <div className="mt-auto shrink-0 px-2 pb-2 pt-3">
-        <div className="flex flex-col rounded-xl px-4 py-5.5" style={{ background: CREAM }}>
+        <div className="flex flex-col rounded-xl p-5" style={{ background: CREAM }}>
           <input
             ref={inputRef}
             value={input}
@@ -318,7 +318,7 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
               </button>
             </div>
             <button
-              onClick={loading ? handleStop : handleSend}
+              onClick={() => (loading ? handleStop() : handleSend())}
               aria-label={loading ? "Stop generating" : "Send"}
               disabled={!loading && !input.trim()}
               className="w-7 h-7 rounded-full flex items-center justify-center disabled:opacity-40"
