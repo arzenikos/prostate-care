@@ -60,9 +60,39 @@ const nodes: CanvasNode[] = [
 ];
 const edges: [string, string][] = [];
 
-const branchX = [360, 1000, 1640];
-const articleStartY = 460;
-const articleGapY = 190;
+const branchX = [600, 1400, 1640];
+const articleStartY = 700;
+const articleGapY = 160;
+const categoryStartX = 0;
+const categoryGapX = 240;
+
+const patientCategories = [
+    {
+        id: 'stage-0',
+        title: 'Prostate cancer basics, tests, recurrence, & support',
+        excerpt: 'Foundations, risk, testing, and support',
+    },
+    {
+        id: 'stage-1',
+        title: 'Stage 1',
+        excerpt: 'Early-stage and localised options',
+    },
+    {
+        id: 'stage-2',
+        title: 'Stage 2',
+        excerpt: 'Intermediate-risk prostate cancer',
+    },
+    {
+        id: 'stage-3',
+        title: 'Stage 3',
+        excerpt: 'Locally advanced prostate cancer',
+    },
+    {
+        id: 'stage-4',
+        title: 'Stage 4',
+        excerpt: 'Living well with advanced prostate cancer',
+    },
+] as const;
 
 branches.forEach((branch, branchIndex) => {
     nodes.push({
@@ -75,6 +105,43 @@ branches.forEach((branch, branchIndex) => {
         type: 'core',
     });
     edges.push(['home', branch.id]);
+
+    if (branch.id === 'patient') {
+        patientCategories.forEach((category, categoryIndex) => {
+            const categoryNodeId = `${branch.id}-${category.id}`;
+            nodes.push({
+                id: categoryNodeId,
+                title: category.title,
+                excerpt: category.excerpt,
+                url: `/patient-space?stage=${category.id}`,
+                x: categoryStartX + categoryIndex * categoryGapX,
+                y: 460,
+                type: 'core',
+            });
+            edges.push([branch.id, categoryNodeId]);
+
+            branch.articles
+                .filter((article) => {
+                    const stage = article.data.stage ?? article.id.split('/')[0];
+                    return stage === category.id;
+                })
+                .sort((a, b) => a.data.title.localeCompare(b.data.title))
+                .forEach((article, articleIndex) => {
+                    const id = `${categoryNodeId}-${article.id.replaceAll('/', '-')}`;
+                    nodes.push({
+                        id,
+                        title: article.data.title,
+                        excerpt: article.data.description,
+                        url: `/patient-space/${article.id}`,
+                        x: categoryStartX + categoryIndex * categoryGapX,
+                        y: articleStartY + articleIndex * articleGapY,
+                        type: 'content',
+                    });
+                    edges.push([categoryNodeId, id]);
+                });
+        });
+        return;
+    }
 
     branch.articles
         .sort((a, b) => a.data.title.localeCompare(b.data.title))
