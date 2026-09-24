@@ -15,8 +15,15 @@ export default function ChatWidget() {
 
     const res = await fetch('/api/chat', {
       method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ messages: next }),
     });
+
+    if (!res.ok || !res.body) {
+      setMessages([...next, { role: 'assistant', content: 'Sorry, I could not answer that question.' }]);
+      setLoading(false);
+      return;
+    }
 
     const reader = res.body!.getReader();
     const decoder = new TextDecoder();

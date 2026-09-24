@@ -10,8 +10,19 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
     return new Response(MESSAGES.rateLimited, { status: 429 });
   }
 
-  const { question } = await request.json();
-  const chunks = await retrieveForQuery(question);
+  const body = await request.json().catch(() => null);
+  const messages = Array.isArray(body?.messages) ? body.messages : [];
+  const lastUserMessage = [...messages]
+    .reverse()
+    .find(message => message?.role === "user" && typeof message.content === "string");
+  const question =
+    typeof body?.question === "string" ? body.question : lastUserMessage?.content;
+
+  if (!question?.trim()) {
+    return new Response(MESSAGES.invalidRequest, { status: 400 });
+  }
+
+  const chunks = await retrieveForQuery(question.trim(), { logEmbedding: true });
 
   if (chunks.length === 0) {
     return new Response(MESSAGES.noContext, { status: 200 });

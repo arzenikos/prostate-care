@@ -5,8 +5,11 @@ import { searchWeb } from "./webSearch";
 
 const MIN_SIMILARITY = 0.3;
 
-export async function retrieveForQuery(query: string): Promise<RetrievedChunk[]> {
-  const queryEmbedding = await embed(query);
+export async function retrieveForQuery(
+  query: string,
+  options: { logEmbedding?: boolean } = {}
+): Promise<RetrievedChunk[]> {
+  const queryEmbedding = await embed(query, options);
   const results = await retrieveSimilarChunks(queryEmbedding, config.RETRIEVAL_TOP_K);
   const relevant = results.filter(r => r.similarity >= MIN_SIMILARITY);
 

@@ -1,6 +1,10 @@
 import { config } from "./config";
 
-export async function embed(text: string): Promise<number[]> {
+interface EmbedOptions {
+  logEmbedding?: boolean;
+}
+
+export async function embed(text: string, options: EmbedOptions = {}): Promise<number[]> {
   const res = await fetch(`${config.OLLAMA_BASE_URL}/api/embeddings`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -8,7 +12,13 @@ export async function embed(text: string): Promise<number[]> {
   });
   if (!res.ok) throw new Error(`Ollama embeddings failed: ${res.status} ${await res.text()}`);
   const data = await res.json();
-  return data.embedding as number[];
+  const embedding = data.embedding as number[];
+
+  if (options.logEmbedding) {
+    console.log(`[chat embedding] "${text}"`, embedding);
+  }
+
+  return embedding;
 }
 
 // Ollama's embeddings endpoint is single-prompt; batch by concurrency, not by one HTTP call
