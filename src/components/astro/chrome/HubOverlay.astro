@@ -37,7 +37,6 @@ import { overlays } from '@contents/ui/site';
               </button>
             </form>
           )}
-
           {'footerLink' in panel && panel.footerLink && (
             <a class="hub-overlay__cta" href={panel.footerLink.href}>
               {panel.footerLink.label}
@@ -103,6 +102,9 @@ import { overlays } from '@contents/ui/site';
   document.querySelectorAll('[data-overlay-close]').forEach((button) => {
     button.addEventListener('click', closeAll);
   });
+  root?.addEventListener('click', (event) => {
+    if (event.target === root) closeAll();
+  });
 
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') closeAll();
@@ -138,32 +140,27 @@ import { overlays } from '@contents/ui/site';
 
 <style>
   .hub-root:not([hidden]) {
-    display: block;
-    /* max-width: var(--content-width); */
-    max-height: var(--content-height);
-    /* margin: 0 auto; */
-    /* padding: 0 1.5rem 1.5rem; */
-    /* Float */
-    position: relative;        /* stays on screen */
-    inset: 0;               /* top:0 right:0 bottom:0 left:0 */
-    background: rgba(0, 0, 0, 0.5); /* dimmed backdrop */
-    /* display: flex; */
-    /* align-items: center; */
-    /* justify-content: center; */
-    z-index: 999;           /* above everything */
-    padding: 0 0 1.5rem;
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 999;
     overflow-y: auto;
-    
+    background: color-mix(in srgb, var(--color-navy-deep) 38%, transparent);
+    backdrop-filter: blur(5px);
   }
 
   .hub-overlay {
-    position: relative; /* this is fine */
-    /* margin: 4rem auto; */
-    /* max-width: 900px; */
+    position: absolute;
+    top: var(--header-height);
+    right: 0;
+    bottom: 0;
+    left: 0;
+    min-height: calc(70vh - var(--header-height));
+    height: calc(70vh - var(--header-height));
+    width: 100%;
     background: var(--color-navy);
     color: #fff;
-    /* padding: 2.5rem 2rem 2rem; */
-    /* border-radius: 12px; */
   }
 
   .hub-overlay[hidden] {
@@ -241,11 +238,13 @@ import { overlays } from '@contents/ui/site';
   .hub-overlay__cta {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
-    margin-top: 2rem;
+    justify-content: right;
+    text-align: right;
+    gap: 0.5rem;
+    margin: 5rem 0;
     color: #fff;
     text-decoration: none;
-    font-size: 0.95rem;
+    font-size: 1.5rem;
   }
 
   .a11y-controls p {
