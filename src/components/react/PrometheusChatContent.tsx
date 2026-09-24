@@ -35,9 +35,20 @@ interface Props {
   persona?: string;
 }
 
+interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+}
+
+const starterQuestions = [
+  "What are the early signs of prostate cancer?",
+  "What questions should I ask my healthcare team?",
+  "How can I support my wellbeing during treatment?",
+];
+
 export default function PrometheusChatContent({ persona = "patient" }: Props) {
   const [input, setInput] = useState("");
-  const [question, setQuestion] = useState("");
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [answer, setAnswer] = useState("");
   const [sources, setSources] = useState<Source[]>([]);
   const [loading, setLoading] = useState(false);
@@ -53,7 +64,7 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
     }
     function handleClosed() {
       abortRef.current?.abort();
-      setQuestion("");
+      setMessages([]);
       setAnswer("");
       setSources([]);
       setShowSource(false);
@@ -70,11 +81,12 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
     };
   }, []);
 
-  async function handleSend() {
-    const q = input.trim();
+  async function handleSend(prompt = input) {
+    const q = prompt.trim();
     if (!q || loading) return;
 
-    setQuestion(q);
+    const conversation = [...messages, { role: "user" as const, content: q }];
+    setMessages(conversation);
     setInput("");
     setAnswer("");
     setSources([]);
@@ -91,7 +103,7 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          messages: [{ role: "user", content: q }],
+          messages: conversation,
           persona,
         }),
         signal: controller.signal,
@@ -108,6 +120,12 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
         }
       }
 
+      function handleStop() {
+        abortRef.current?.abort();
+        setLoading(false);
+        window.dispatchEvent(new CustomEvent("prometheus:generated"));
+      }
+
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let acc = "";
@@ -117,7 +135,10 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
         if (done) break;
         acc += decoder.decode(value, { stream: true });
         setAnswer(acc);
-        setLoading(false);
+      }
+      if (acc) {
+        setMessages((previous) => [...previous, { role: "assistant", content: acc }]);
+        setAnswer("");
       }
     } catch (err: any) {
       if (err.name !== "AbortError") {
@@ -159,15 +180,44 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
 
   return (
     <>
-      {(question || loading) && (
+      {messages.length === 0 && !loading && (
+        <div className="px-6 pb-3">
+          <p className="text-[13px] mb-3 text-center" style={{ color: CREAM_DIM }}>
+            Start with a question about prostate cancer, treatment, or support.
+          </p>
+          <div className="flex flex-wrap justify-center gap-2">
+            {starterQuestions.map((starter) => (
+              <button
+                key={starter}
+                type="button"
+                onClick={() => handleSend(starter)}
+                className="rounded-full px-3 py-2 text-left text-[12px] transition-colors hover:brightness-110"
+                style={{ background: NAVY, color: CREAM, border: `1px solid ${HAIRLINE}` }}
+              >
+                {starter}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {(messages.length > 0 || loading) && (
         <div className="prometheus-conversation px-6 pb-2 max-h-[42vh] overflow-y-auto">
-          {question && (
-            <div className="flex justify-end mb-3">
-              <p className="max-w-[78%] rounded-2xl rounded-br-md px-4 py-2.5 text-[13px] leading-relaxed" style={{ background: ACCENT, color: NAVY_DEEP }}>
-                {question}
-              </p>
+          {messages.map((message, index) => (
+            <div key={`${message.role}-${index}`} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"} mb-3`}>
+              <div
+                className="max-w-[78%] rounded-2xl px-4 py-2.5 text-[13px] leading-relaxed"
+                style={{
+                  background: message.role === "user" ? ACCENT : NAVY,
+                  color: message.role === "user" ? NAVY_DEEP : CREAM,
+                  borderBottomRightRadius: message.role === "user" ? "0.25rem" : undefined,
+                  borderBottomLeftRadius: message.role === "assistant" ? "0.25rem" : undefined,
+                }}
+              >
+                {message.role === "assistant" ? renderAnswer(message.content) : message.content}
+              </div>
             </div>
-          )}
+          ))}
 
           {loading && !answer && (
             <div className="flex justify-start mb-3">
@@ -236,7 +286,7 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSend()}
-            placeholder="A whole new way to work."
+            placeholder="Enter your question about prostate health."
             className="bg-transparent outline-none text-[13px] mb-10"
             style={{ color: NAVY_DEEP }}
             disabled={loading}
@@ -251,14 +301,14 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
               </button>
             </div>
             <button
-              onClick={handleSend}
-              aria-label="Send"
-              disabled={loading || !input.trim()}
+              onClick={loading ? handleStop : handleSend}
+              aria-label={loading ? "Stop generating" : "Send"}
+              disabled={!loading && !input.trim()}
               className="w-7 h-7 rounded-full flex items-center justify-center disabled:opacity-40"
               style={{ background: NAVY }}
             >
               {loading ? (
-                <Loader2 size={14} className="animate-spin" style={{ color: CREAM }} />
+                <span className="w-2.5 h-2.5 rounded-sm" style={{ background: CREAM }} />
               ) : (
                 <ArrowUp size={14} style={{ color: CREAM }} />
               )}
