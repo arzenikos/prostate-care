@@ -18,29 +18,28 @@ const { persona = "patient" } = Astro.props;
 
 
 
-<div class="prometheus-toggle-container">
-  <button id="prometheus-toggle" aria-label="Open Ask Prometheus AI">
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 32 32"><path fill="black" d="M30.47 18.28V7.62h-1.52v9.14h-1.52v-1.52H25.9v12.19h1.53V25.9h3.04v-1.52H32v-6.1zm-6.09-6.09h1.52v3.05h-1.52ZM6.09 27.43v1.52h1.53v1.53h1.52v-1.53h13.71v1.53h1.53v-1.53h1.52v-1.52zm16.76-9.15h1.53v3.05h-1.53Zm0-7.61h1.53v1.52h-1.53Zm-3.04 6.09h3.04v1.52h-3.04ZM9.14 30.48h13.71V32H9.14Zm10.67-9.15h3.04v1.53h-3.04Zm-1.53-3.05h1.53v3.05h-1.53Zm0-16.76h1.53v1.53h-1.53Zm-4.57 22.86h4.57v1.52h-4.57Zm0-24.38h4.57v1.52h-4.57Zm-1.52 18.28h1.52v3.05h-1.52Zm0-16.76h1.52v1.53h-1.52ZM9.14 16.76h3.05v1.52H9.14Zm13.71-6.09V9.14h-6.09V4.57h1.52V3.05h-4.57v1.52h1.52v4.57H9.14v1.53z"/><path fill="black" d="M9.14 21.33h3.05v1.53H9.14Zm-1.52-3.05h1.52v3.05H7.62Zm0-7.61h1.52v1.52H7.62Zm-1.53 1.52h1.53v3.05H6.09Zm0 3.05H4.57v1.52H3.04V7.62H1.52v10.66H0v6.1h1.52v1.52h3.05v1.53h1.52z"/></svg>
+<div id="prometheus-toggle-container" class="prometheus-toggle-container">
+  <button id="prometheus-toggle" type="button" aria-label="Open Ask Prometheus AI">
+    <!-- <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><g fill="none" stroke="var(--color-navy)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.50"><rect width="20" height="14" x="2" y="9" rx="4"/><circle cx="12" cy="3" r="2"/><circle cx="9" cy="16" r=".5"/><circle cx="15" cy="16" r=".5"/><path d="M12 9V5"/></g></svg> -->
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="var(--color-navy-contrast)" d="M13.5 2c0 .444-.193.843-.5 1.118V5h5a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3h5V3.118A1.5 1.5 0 1 1 13.5 2M0 10h2v6H0zm24 0h-2v6h2zM9 14.5a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3m7.5-1.5a1.5 1.5 0 1 0-3 0a1.5 1.5 0 0 0 3 0"/></svg>
+    <!-- <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="var(--color-navy)" d="M13.5 2c0 .444-.193.843-.5 1.118V5h5a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3h5V3.118A1.5 1.5 0 1 1 13.5 2M0 10h2v6H0zm24 0h-2v6h2zM9 14.5a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3m7.5-1.5a1.5 1.5 0 1 0-3 0a1.5 1.5 0 0 0 3 0"/></svg> -->
   </button>
 </div>
 
-<div
-  id="prometheus-backdrop"
-  class="prometheus-backdrop"
->
+<div id="prometheus-backdrop" class="prometheus-backdrop">
   <div
     id="prometheus-panel"
+    class="prometheus-panel"
     role="dialog"
     aria-modal="true"
     aria-label="Ask Prometheus AI"
-    class="prometheus-panel"
   >
     <!-- Top bar -->
     <div class="prometheus-topbar">
-      <button id="prometheus-collapse" aria-label="Collapse" class="prometheus-icon-btn">
+      <button id="prometheus-collapse" type="button" class="prometheus-icon-btn" aria-label="Collapse">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="#f4f1ea" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.50" d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
-      <button aria-label="Expand to full screen" class="prometheus-icon-btn">
+      <button id="prometheus-expand" type="button" class="prometheus-icon-btn" aria-label="Expand to full screen">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F4F1EA" stroke-width="2">
           <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
@@ -68,23 +67,40 @@ const { persona = "patient" } = Astro.props;
 </div>
 
 <script>
+  const toggleContainer = document.getElementById("prometheus-toggle-container");
   const toggle = document.getElementById("prometheus-toggle");
   const backdrop = document.getElementById("prometheus-backdrop");
+  const panel = document.getElementById("prometheus-panel");
   const collapse = document.getElementById("prometheus-collapse");
+
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
   function openPanel() {
     backdrop?.classList.add("is-open");
-    toggle?.classList.add("is-hidden");
+    toggleContainer?.classList.add("is-hidden");
     document.body.style.overflow = "hidden";
+
+    // slideUpBigIn: fade in while sliding up 75px
+    if (!reduceMotion.matches) {
+      panel?.animate(
+        [
+          { opacity: 0, transform: "translateY(75px)" },
+          { opacity: 1, transform: "translateY(0)" },
+        ],
+        { duration: 800, easing: "cubic-bezier(0.215, 0.61, 0.355, 1)", fill: "backwards" }
+      );
+    }
+
     window.dispatchEvent(new CustomEvent("prometheus:opened"));
   }
 
   function closePanel() {
     backdrop?.classList.remove("is-open");
-    toggle?.classList.remove("is-hidden");
+    toggleContainer?.classList.remove("is-hidden");
     document.body.style.overflow = "";
     // lets the island clear its answer/sources so reopening starts fresh
     window.dispatchEvent(new CustomEvent("prometheus:closed"));
+    toggle?.focus();
   }
 
   toggle?.addEventListener("click", openPanel);
@@ -103,42 +119,16 @@ const { persona = "patient" } = Astro.props;
   /* Launcher button */
   .prometheus-toggle-container {
     position: fixed;
-    left: 50%;
-    bottom: 8rem;
-    transform: translateX(-50%);
+    right: 2rem;
+    bottom: 3rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.25rem;
-    border-radius: 50%;
-    z-index: 3;
-  }
-
-  .prometheus-toggle-container:hover {
-    transform: translateX(-50%);
+    z-index: 50;
   }
 
   .prometheus-toggle-container.is-hidden {
-    display: none;
-  }
-  .prometheus-toggle {
-    position: fixed;
-    left: 50%;
-    bottom: 7rem;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.25rem;
-    border-radius: 50%;
-    z-index: 3;
-  }
-
-  .prometheus-toggle:hover {
-    transform: translateX(-50%);
-  }
-
-  .prometheus-toggle.is-hidden {
     display: none;
   }
 
@@ -217,24 +207,17 @@ const { persona = "patient" } = Astro.props;
     font-family: Georgia, serif;
   }
 
-  .prometheus-toggle-containerbutton {
-    background: #334df623;
-    padding: 2cap;
-    z-index: 50;
-    border-radius: 50%;
-  }
-
   .prometheus-toggle-container button {
-    background: #334df623;
+    background: var(--color-navy-contrast);
+    background: var(--color-navy);
     padding: 1rem;
     z-index: 50;
-    border-radius: 50%;
+    border-radius: 20%;
   }
 
   .prometheus-topbar button {
     position: relative;
     padding: 2cap;
     z-index: 50;
-    border-radius: 50%;
   }
 </style>

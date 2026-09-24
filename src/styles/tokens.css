@@ -4,6 +4,7 @@
   --color-surface: #ffffff;
   --color-surface-muted: #f3f1ea;
   --color-navy: #00007e;
+  --color-navy-contrast: #59a0eb;
   --color-navy-deep: #001a5c;
   --color-navy-soft: #2e2e6e;
   --color-blue: #3d5aa8;
@@ -32,6 +33,10 @@
   --header-height: 92px;
 }
 
+::-webkit-scrollbar {
+  display: none;
+}
+
 html {
   /* font-family: 'Maragsa', sans-serif; */
   font-family: var(--font-sans);
@@ -51,6 +56,7 @@ body {
   color: rgb(var(--gray-dark));
 	font-size: 20px;
 	line-height: 1.7;
+  /* scrollbar-width: none; */
 }
 
 
