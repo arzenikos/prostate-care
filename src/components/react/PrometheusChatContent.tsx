@@ -56,6 +56,7 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
   const [showSource, setShowSource] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const streamTextRef = useRef("");
 
   // Astro dispatches these on the collapsed/expanded toggle
   useEffect(() => {
@@ -93,10 +94,12 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
     setShowSource(false);
     setError(null);
     setLoading(true);
+    console.info("[chat] sending prompt");
     window.dispatchEvent(new CustomEvent("prometheus:generating"));
 
     const controller = new AbortController();
     abortRef.current = controller;
+    streamTextRef.current = "";
 
     try {
       const res = await fetch("/api/chat", {
@@ -108,6 +111,7 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
         }),
         signal: controller.signal,
       });
+      console.info(`[chat] response status ${res.status}`);
 
       if (!res.ok || !res.body) throw new Error(`Request failed (${res.status})`);
 
@@ -120,12 +124,6 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
         }
       }
 
-      function handleStop() {
-        abortRef.current?.abort();
-        setLoading(false);
-        window.dispatchEvent(new CustomEvent("prometheus:generated"));
-      }
-
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let acc = "";
@@ -134,6 +132,7 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
         const { done, value } = await reader.read();
         if (done) break;
         acc += decoder.decode(value, { stream: true });
+        streamTextRef.current = acc;
         setAnswer(acc);
       }
       if (acc) {
@@ -142,12 +141,24 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
       }
     } catch (err: any) {
       if (err.name !== "AbortError") {
+        console.error("[chat] request failed", err);
         setError("Something went wrong reaching the assistant. Try again.");
+      } else if (streamTextRef.current) {
+        setMessages((previous) => [...previous, { role: "assistant", content: streamTextRef.current }]);
+        setAnswer("");
       }
     } finally {
+      console.info("[chat] request finished");
       setLoading(false);
       window.dispatchEvent(new CustomEvent("prometheus:generated"));
     }
+  }
+
+  function handleStop() {
+    console.info("[chat] stopping response");
+    abortRef.current?.abort();
+    setLoading(false);
+    window.dispatchEvent(new CustomEvent("prometheus:generated"));
   }
 
   function renderAnswer(text: string) {
@@ -202,7 +213,7 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
       )}
 
       {(messages.length > 0 || loading) && (
-        <div className="prometheus-conversation px-6 pb-2 max-h-[42vh] overflow-y-auto">
+        <div className="prometheus-conversation min-h-0 flex-1 px-6 pb-2 overflow-y-auto">
           {messages.map((message, index) => (
             <div key={`${message.role}-${index}`} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"} mb-3`}>
               <div
@@ -279,7 +290,7 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
       )}
 
       {/* Input bar */}
-      <div className="pb-7 pt-2">
+      <div className="shrink-0 pb-7 pt-2">
         <div className="flex flex-col rounded-xl px-4 py-5.5" style={{ background: CREAM }}>
           <input
             ref={inputRef}
