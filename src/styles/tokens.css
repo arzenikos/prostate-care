@@ -19,6 +19,15 @@
   --color-overlay-pattern: #4ec4c8;
   --color-accent-serif: #9a7b3c;
   --color-group-label: #6b7a3a;
+  --color-canvas-bg: var(--color-bg-warm);
+  --color-canvas-surface: color-mix(in srgb, var(--color-surface) 92%, var(--color-navy) 8%);
+  --color-canvas-border: color-mix(in srgb, var(--color-navy) 18%, var(--color-border) 82%);
+  --color-canvas-line: color-mix(in srgb, var(--color-navy) 24%, transparent);
+  --color-canvas-text: var(--color-navy-deep);
+  --color-canvas-muted: var(--color-text-muted);
+  --color-canvas-accent: var(--color-blue);
+  --color-canvas-highlight: var(--color-accent-serif);
+  --color-canvas-dot: color-mix(in srgb, var(--color-navy) 12%, transparent);
 
   --font-sans: 'Inter Variable', Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-serif: Georgia, 'Times New Roman', serif;

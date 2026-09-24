@@ -350,15 +350,15 @@ nodesWithHere.forEach((n) => mobileGroups[n.type]?.push(n));
   .canvas-nav-root {
     position: relative;
     width: 100%;
-    --ink: #131318;
-    --card: #1f1f28;
-    --card-border: #33333f;
-    --line: #3a3a46;
-    --text: #e9e7e2;
-    --text-dim: #97949c;
-    --violet: #9184e0;
-    --amber: #e0a458;
-    --slate: #6d6d7a;
+    --ink: var(--color-canvas-bg);
+    --card: var(--color-canvas-surface);
+    --card-border: var(--color-canvas-border);
+    --line: var(--color-canvas-line);
+    --text: var(--color-canvas-text);
+    --text-dim: var(--color-canvas-muted);
+    --violet: var(--color-canvas-accent);
+    --amber: var(--color-canvas-highlight);
+    --slate: var(--color-text-subtle);
   }
 
   /* --- desktop/tablet canvas (default) --- */
@@ -372,7 +372,7 @@ nodesWithHere.forEach((n) => mobileGroups[n.type]?.push(n));
     overflow: hidden;
     cursor: grab;
     background-color: var(--ink);
-    background-image: radial-gradient(circle, #2c2c36 1px, transparent 1px);
+    background-image: radial-gradient(circle, var(--color-canvas-dot) 1px, transparent 1px);
     background-size: 28px 28px;
     border-radius: 12px;
   }
@@ -416,13 +416,13 @@ nodesWithHere.forEach((n) => mobileGroups[n.type]?.push(n));
     user-select: none;
     color: var(--text);
     font-family: inherit;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+    box-shadow: var(--shadow-card);
     transition: border-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
   }
   .node:hover {
     border-color: var(--violet);
     transform: translateY(-2px);
-    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45);
+    box-shadow: 0 8px 22px color-mix(in srgb, var(--color-navy-deep) 18%, transparent);
   }
   .node.dragging { cursor: grabbing; z-index: 50; transition: none; }
   .node .eyebrow {
@@ -439,14 +439,14 @@ nodesWithHere.forEach((n) => mobileGroups[n.type]?.push(n));
   .node p { margin: 0; font-size: 12px; color: var(--text-dim); line-height: 1.5; }
   .node.here {
     border-color: var(--amber);
-    box-shadow: 0 0 0 1px var(--amber), 0 8px 22px rgba(0, 0, 0, 0.45);
+    box-shadow: 0 0 0 1px var(--amber), 0 8px 22px color-mix(in srgb, var(--color-navy-deep) 18%, transparent);
   }
   .node.here::after {
     content: 'you are here';
     position: absolute;
     top: -9px; right: 12px;
     background: var(--amber);
-    color: #1b1508;
+    color: var(--color-surface);
     font-family: 'JetBrains Mono', monospace;
     font-size: 9px;
     font-weight: 700;
@@ -479,7 +479,7 @@ nodesWithHere.forEach((n) => mobileGroups[n.type]?.push(n));
     display: flex;
     flex-direction: column;
     gap: 6px;
-    background: rgba(19, 19, 24, 0.7);
+    background: color-mix(in srgb, var(--color-surface) 88%, transparent);
     padding: 12px 14px;
     border-radius: 8px;
     border: 1px solid var(--card-border);
@@ -490,7 +490,7 @@ nodesWithHere.forEach((n) => mobileGroups[n.type]?.push(n));
   #legend .dot.core { background: var(--violet); }
   #legend .dot.content { background: var(--amber); }
   #legend .dot.utility { background: var(--slate); }
-  #legend .hint { margin-top: 4px; color: #5f5c64; }
+  #legend .hint { margin-top: 4px; color: var(--color-text-subtle); }
 
   #controls {
     position: absolute;

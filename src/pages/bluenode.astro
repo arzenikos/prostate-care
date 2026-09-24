@@ -1,4 +1,5 @@
 ---
+import { getCollection } from 'astro:content';
 import Layout from '@layouts/Layout.astro';
 import Canvas from '@components/astro/media/Canvas.astro';
 
@@ -13,35 +14,84 @@ interface CanvasNode {
     type: 'core' | 'content' | 'utility';
 }
 
-interface Props {
-    nodes: CanvasNode[];
-    edges: [string, string][];
-    currentPath?: string;
-    height?: string; // CSS height, defaults to 100vh
-}
+const [patients, family, researchers] = await Promise.all([
+    getCollection('patient', ({ data }) => !data.draft),
+    getCollection('family', ({ data }) => !data.draft),
+    getCollection('researchers', ({ data }) => !data.draft),
+]);
+
+const branches = [
+    {
+        id: 'patient',
+        title: 'Patient Support',
+        excerpt: 'Information for people navigating a diagnosis',
+        url: '/patient-space',
+        articles: patients,
+        articleUrl: (id: string) => `/patient-space/${id}`,
+    },
+    {
+        id: 'family',
+        title: 'Whānau Support',
+        excerpt: 'Guidance for supporting someone you love',
+        url: '/family-support',
+        articles: family,
+        articleUrl: (id: string) => `/family-support/${id}`,
+    },
+    {
+        id: 'research',
+        title: 'Research & Students',
+        excerpt: 'Clinical and academic prostate cancer knowledge',
+        url: '/researcher-hub',
+        articles: researchers,
+        articleUrl: (id: string) => `/researcher-hub/${id}`,
+    },
+] as const;
 
 const nodes: CanvasNode[] = [
-    { id: 'home',    title: 'Home',            excerpt: 'Landing page, entry point', url: '/',           x: 1000, y: 120, type: 'core' },
-    { id: 'about',   title: 'About',           excerpt: 'Who this is for',           url: '/about',      x: 660,  y: 320, type: 'core' },
-    { id: 'work',    title: 'Work / Services', excerpt: 'What is offered',           url: '/work',       x: 1340, y: 320, type: 'core' },
-    { id: 'case1',   title: 'Case study',      excerpt: 'Project deep-dive',         url: '/work/case1', x: 1200, y: 520, type: 'content' },
-    { id: 'case2',   title: 'Case study',      excerpt: 'Second deep-dive',          url: '/work/case2', x: 1480, y: 520, type: 'content' },
-    { id: 'blog',    title: 'Blog',            excerpt: 'Articles and updates',      url: '/blog',       x: 660,  y: 560, type: 'content' },
-    { id: 'post1',   title: 'Latest post',     excerpt: 'Most recent article',       url: '/blog/1',     x: 500,  y: 760, type: 'content' },
-    { id: 'post2',   title: 'Featured post',   excerpt: 'Pinned article',            url: '/blog/2',     x: 800,  y: 760, type: 'content' },
-    { id: 'contact', title: 'Contact',         excerpt: 'Get in touch',              url: '/contact',    x: 1000, y: 780, type: 'core' },
+    {
+        id: 'home',
+        title: 'Home',
+        excerpt: 'Pamana prostate cancer support',
+        url: '/',
+        x: 1000,
+        y: 80,
+        type: 'core',
+    },
 ];
+const edges: [string, string][] = [];
 
-const edges: [string, string][] = [
-    ['home', 'about'],
-    ['home', 'work'],
-    ['home', 'contact'],
-    ['work', 'case1'],   // right-click "Work / Services" to collapse these two
-    ['work', 'case2'],
-    ['about', 'blog'],
-    ['blog', 'post1'],   // right-click "Blog" to collapse these two
-    ['blog', 'post2'],
-];
+const branchX = [360, 1000, 1640];
+const articleStartY = 460;
+const articleGapY = 190;
+
+branches.forEach((branch, branchIndex) => {
+    nodes.push({
+        id: branch.id,
+        title: branch.title,
+        excerpt: branch.excerpt,
+        url: branch.url,
+        x: branchX[branchIndex],
+        y: 280,
+        type: 'core',
+    });
+    edges.push(['home', branch.id]);
+
+    branch.articles
+        .sort((a, b) => a.data.title.localeCompare(b.data.title))
+        .forEach((article, articleIndex) => {
+            const id = `${branch.id}-${article.id.replaceAll('/', '-')}`;
+            nodes.push({
+                id,
+                title: article.data.title,
+                excerpt: article.data.description,
+                url: branch.articleUrl(article.id),
+                x: branchX[branchIndex],
+                y: articleStartY + articleIndex * articleGapY,
+                type: 'content',
+            });
+            edges.push([branch.id, id]);
+        });
+});
 
 ---
 <Layout title={title}>
