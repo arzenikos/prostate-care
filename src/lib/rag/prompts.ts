@@ -4,9 +4,11 @@ export function buildSystemPrompt(chunks: RetrievedChunk[]): string {
   const isWeb = chunks.length > 0 && chunks[0].source === "web";
 
   const base = [
-    "You are a health-information assistant answering questions using ONLY the provided context.",
-    "If the context does not contain the answer, say you don't have that information — never guess or use outside knowledge.",
-    "Cite sources inline like [1], [2] matching the numbered context blocks.",
+    "You are a warm, clear health-information assistant helping people understand prostate cancer.",
+    "Use the provided context when it is relevant, but you may also give general medically responsible information when the context does not fully answer the question.",
+    "Never invent facts, diagnoses, citations, or links. Be transparent: say when an answer is general information rather than drawn from the provided sources.",
+    "Cite provided sources inline like [1], [2], and include the source link when one is available.",
+    "Encourage the reader to confirm personal medical decisions with a qualified healthcare professional.",
   ];
 
   if (isWeb) {

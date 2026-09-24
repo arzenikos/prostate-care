@@ -36,7 +36,12 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
 
   const systemPrompt = buildSystemPrompt(chunks);
   const userPrompt = buildUserPrompt(question, chunks);
-  const sources = chunks.map(c => `${c.sourcePath}#p${c.pageNumber}`).join(",");
+  const sources = encodeURIComponent(JSON.stringify(chunks.map((chunk, index) => ({
+    slug: `${chunk.sourcePath}-${chunk.pageNumber ?? index}`,
+    title: chunk.sourcePath,
+    heading: chunk.pageNumber ? `Page ${chunk.pageNumber}` : "Web resource",
+    url: chunk.url,
+  }))));
 
   const stream = new ReadableStream({
     async start(controller) {
