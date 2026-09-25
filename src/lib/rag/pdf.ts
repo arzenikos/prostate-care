@@ -58,3 +58,11 @@ export async function extractPages(sourcePath: string): Promise<PageText[]> {
   }
   return pages;
 }
+
+export async function extractPage(sourcePath: string, pageNumber = 1): Promise<PageText> {
+  const buffer = fs.readFileSync(sourcePath);
+  const pdf = await getDocumentProxy(new Uint8Array(buffer));
+  const { text } = await extractText(pdf, { mergePages: false, page: pageNumber } as any);
+  const raw = Array.isArray(text) ? text[0] : text;
+  return { pageNumber, text: sanitizeText(raw) };
+}

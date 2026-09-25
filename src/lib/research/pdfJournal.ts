@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { extractPages } from "@rag-library/pdf";
+import { extractPage } from "@rag-library/pdf";
 
 export interface PdfJournalEntry {
   id: string;
@@ -11,6 +11,14 @@ export interface PdfJournalEntry {
   journal: string;
   tags: string[];
   pdfUrl: string;
+}
+
+export interface PdfJournalPage {
+  entries: PdfJournalEntry[];
+  page: number;
+  pageSize: number;
+  totalEntries: number;
+  totalPages: number;
 }
 
 const root = path.resolve(process.cwd(), "public", "assets", "website-knowledge");
@@ -30,6 +38,8 @@ function findPdfs(currentDir: string): string[] {
     return entry.isFile() && entry.name.toLowerCase().endsWith(".pdf") ? [filePath] : [];
   });
 }
+
+const pdfFiles = findPdfs(root).sort((a, b) => path.basename(a).localeCompare(path.basename(b)));
 
 function extractDate(text: string): string {
   const match = text.match(
@@ -78,15 +88,19 @@ function pdfUrl(filePath: string): string {
     .join("/")}`;
 }
 
-export async function getPdfJournalEntries(): Promise<PdfJournalEntry[]> {
+export async function getPdfJournalEntries(page = 1, pageSize = 10): Promise<PdfJournalPage> {
+  const totalEntries = pdfFiles.length;
+  const totalPages = Math.max(1, Math.ceil(totalEntries / pageSize));
+  const currentPage = Math.min(Math.max(1, page), totalPages);
+  const pageFiles = pdfFiles.slice((currentPage - 1) * pageSize, currentPage * pageSize);
   const entries: PdfJournalEntry[] = [];
-  for (const filePath of findPdfs(root)) {
+
+  for (const filePath of pageFiles) {
     const relativePath = path.relative(root, filePath);
     const title = displayName(path.basename(filePath));
     let text = "";
     try {
-      const pages = await extractPages(filePath);
-      text = pages.map((page) => page.text).join("\n").trim();
+      text = (await extractPage(filePath)).text.trim();
     } catch (error) {
       console.error(`[research-hub] failed to extract PDF metadata from ${relativePath}`, error);
     }
@@ -103,5 +117,5 @@ export async function getPdfJournalEntries(): Promise<PdfJournalEntry[]> {
       pdfUrl: pdfUrl(filePath),
     });
   }
-  return entries.sort((a, b) => a.title.localeCompare(b.title));
+  return { entries, page: currentPage, pageSize, totalEntries, totalPages };
 }
