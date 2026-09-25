@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Eye, Paperclip, Mic, ArrowUp, X, Loader2 } from "lucide-react";
+import { Paperclip, Mic, ArrowUp, X, Loader2, ExternalLink } from "lucide-react";
 
 /**
  * PrometheusChatContent — the "action stuff" only.
@@ -53,7 +53,7 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
   const [sources, setSources] = useState<Source[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showSource, setShowSource] = useState(false);
+  const [selectedSource, setSelectedSource] = useState<Source | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const abortRef = useRef<AbortController | null>(null);
   const streamTextRef = useRef("");
@@ -68,7 +68,7 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
       setMessages([]);
       setAnswer("");
       setSources([]);
-      setShowSource(false);
+      setSelectedSource(null);
       setError(null);
       setLoading(false);
       setInput("");
@@ -91,7 +91,7 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
     setInput("");
     setAnswer("");
     setSources([]);
-    setShowSource(false);
+    setSelectedSource(null);
     setError(null);
     setLoading(true);
     console.info("[chat] sending prompt");
@@ -254,42 +254,40 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
           )}
 
           {sources.length > 0 && (
-            <button
-              onClick={() => setShowSource((v) => !v)}
-              aria-label="Toggle sources"
-              className="mb-3 opacity-60 hover:opacity-100 transition-opacity flex items-center gap-1.5"
-              style={{ color: CREAM }}
-            >
-              <Eye size={16} />
-              <span className="text-[12px]">
-                {sources.length} source{sources.length > 1 ? "s" : ""}
-              </span>
-            </button>
+            <ul className="mb-3 space-y-1 pl-4 list-disc" aria-label="Sources">
+              {sources.map((source) => (
+                <li key={source.slug + source.heading}>
+                  <a
+                    href={source.url}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      setSelectedSource(source);
+                    }}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-left text-[11px] italic opacity-60 hover:opacity-100 transition-opacity underline"
+                    style={{ color: CREAM }}
+                  >
+                    {source.title}
+                    {source.heading !== "Web resource" ? ` (${source.heading})` : ""}
+                  </a>
+                </li>
+              ))}
+            </ul>
           )}
 
           {/* Mobile: inline sheet, not side-docked (no room off-canvas) */}
-          {showSource && sources.length > 0 && (
+          {selectedSource && (
             <div className="md:hidden mb-3 space-y-2">
-              {sources.map((s) => (
-                <div
-                  key={s.slug + s.heading}
-                  className="rounded-lg px-3 py-2.5"
-                  style={{ background: NAVY_DEEP, border: `1px solid ${HAIRLINE}` }}
-                >
-                  {s.url ? (
-                    <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-[11px] leading-snug underline" style={{ color: CREAM }}>
-                      {s.title}
-                    </a>
-                  ) : (
-                    <p className="text-[11px] leading-snug" style={{ color: CREAM }}>
-                      {s.title}
-                    </p>
-                  )}
-                  <p className="text-[11px] mt-0.5" style={{ color: ACCENT }}>
-                    {s.heading}
-                  </p>
-                </div>
-              ))}
+              <div className="rounded-lg px-3 py-2.5" style={{ background: NAVY_DEEP, border: `1px solid ${HAIRLINE}` }}>
+                <p className="text-[11px] leading-snug" style={{ color: CREAM }}>{selectedSource.title}</p>
+                <p className="text-[11px] mt-0.5" style={{ color: ACCENT }}>{selectedSource.heading}</p>
+                {selectedSource.url && (
+                  <a href={selectedSource.url} target="_blank" rel="noopener noreferrer" className="text-[11px] underline" style={{ color: CREAM }}>
+                    Open resource
+                  </a>
+                )}
+              </div>
             </div>
           )}
         </div>
@@ -338,50 +336,51 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
           (positions off the nearest `position: relative` ancestor,
           which lives in PrometheusChat.astro — works fine across the
           Astro/React boundary since it's just CSS) */}
-      {showSource && sources.length > 0 && (
-        <div
-          className="hidden md:block absolute top-24 -right-3 translate-x-full w-56 rounded-xl shadow-xl overflow-hidden max-h-[60vh] overflow-y-auto"
-          style={{ background: NAVY_DEEP, border: `1px solid ${HAIRLINE}` }}
+      {selectedSource && (
+        <aside
+          className="hidden md:flex absolute top-0 right-0 h-full w-1/3 flex-col shadow-xl overflow-hidden"
+          style={{ background: NAVY_DEEP, borderLeft: `1px solid ${HAIRLINE}` }}
+          aria-label={`Preview of ${selectedSource.title}`}
         >
-          <div className="flex items-center justify-between px-3 pt-3 pb-1">
-            <p className="text-[11px] font-medium" style={{ color: CREAM_DIM }}>
-              Sources
-            </p>
+          <div className="flex items-start justify-between gap-2 px-3 pt-4 pb-3">
+            <div>
+              <p className="text-[11px] font-medium leading-snug" style={{ color: CREAM }}>{selectedSource.title}</p>
+              <p className="text-[10px] mt-1" style={{ color: ACCENT }}>{selectedSource.heading}</p>
+            </div>
             <button
-              onClick={() => setShowSource(false)}
-              aria-label="Close sources"
-              className="opacity-50 hover:opacity-90 shrink-0"
+              onClick={() => setSelectedSource(null)}
+              aria-label="Close source preview"
+              className="opacity-60 hover:opacity-100 shrink-0"
               style={{ color: CREAM }}
             >
               <X size={12} />
             </button>
           </div>
-          {sources.map((s, i) => (
-            <div
-              key={s.slug + s.heading}
-              className="px-3 py-2.5"
-              style={{ borderTop: i > 0 ? `1px solid ${HAIRLINE}` : "none" }}
+          <div className="min-h-0 flex-1 px-3 pb-3">
+            {selectedSource.url?.toLowerCase().endsWith(".pdf") ? (
+              <iframe
+                title={`PDF preview of ${selectedSource.title}`}
+                src={selectedSource.url}
+                className="h-full w-full rounded border-0 bg-white"
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center text-center">
+                <p className="text-[11px]" style={{ color: CREAM_DIM }}>Preview unavailable for this web resource.</p>
+              </div>
+            )}
+          </div>
+          {selectedSource.url && (
+            <a
+              href={selectedSource.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-1 px-3 py-3 text-[11px] underline"
+              style={{ color: CREAM }}
             >
-              {s.url ? (
-                <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-[11px] leading-snug underline" style={{ color: CREAM }}>
-                  {s.title}
-                </a>
-              ) : (
-                <p className="text-[11px] leading-snug" style={{ color: CREAM }}>
-                  {s.title}
-                </p>
-              )}
-              {s.url ? (
-                <a href={s.url} target="_blank" rel="noopener noreferrer" style={{ color: ACCENT }}>
-                  {s.url}
-                </a>
-              ) : (
-                <p style={{ color: ACCENT }}>{s.heading}</p>
-              )}
-              
-            </div>
-          ))}
-        </div>
+              Open resource <ExternalLink size={12} />
+            </a>
+          )}
+        </aside>
       )}
     </div>
   );

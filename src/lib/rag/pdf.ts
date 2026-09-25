@@ -12,14 +12,26 @@ export interface DiscoveredPdf {
 
 export function discoverPdfs(): DiscoveredPdf[] {
   const dir = config.PDF_SOURCE_DIR;
-  return fs.readdirSync(dir)
-    .filter(f => f.toLowerCase().endsWith(".pdf"))
-    .map(file => {
-      const sourcePath = path.join(dir, file);
+  const sourcePaths: string[] = [];
+
+  function visit(currentDir: string) {
+    for (const entry of fs.readdirSync(currentDir, { withFileTypes: true })) {
+      const sourcePath = path.join(currentDir, entry.name);
+      if (entry.isDirectory()) {
+        visit(sourcePath);
+      } else if (entry.isFile() && entry.name.toLowerCase().endsWith(".pdf")) {
+        sourcePaths.push(sourcePath);
+      }
+    }
+  }
+
+  visit(dir);
+
+  return sourcePaths.map(sourcePath => {
       const bytes = fs.readFileSync(sourcePath);
       const contentHash = crypto.createHash("sha256").update(bytes).digest("hex");
       return { sourcePath, contentHash };
-    });
+  });
 }
 
 export interface PageText {

@@ -14,10 +14,18 @@ function sourcePageUrl(sourcePath: string): string | undefined {
   const relativePath = path.relative(root, path.resolve(sourcePath));
   if (relativePath.startsWith("..") || path.isAbsolute(relativePath)) return undefined;
 
-  return `/resources/${relativePath
+  return `/assets/website-knowledge/${relativePath
     .split(path.sep)
     .map(segment => encodeURIComponent(segment))
     .join("/")}`;
+}
+
+function sourceTitle(sourcePath: string): string {
+  const filename = path.basename(sourcePath).replace(/\.pdf$/i, "");
+  return filename
+    .replace(/[-_]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 export const POST: APIRoute = async ({ request, clientAddress }) => {
@@ -50,12 +58,18 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
 
   const systemPrompt = buildSystemPrompt(chunks);
   const userPrompt = buildUserPrompt(question, chunks);
-  const sources = encodeURIComponent(JSON.stringify(chunks.map((chunk, index) => ({
-    slug: `${chunk.sourcePath}-${chunk.pageNumber ?? index}`,
-    title: chunk.sourcePath,
-    heading: chunk.pageNumber ? `Page ${chunk.pageNumber}` : "Web resource",
-    url: chunk.url ?? sourcePageUrl(chunk.sourcePath),
-  }))));
+  const sources = encodeURIComponent(JSON.stringify(
+    chunks
+      .map((chunk, index) => ({
+        slug: `${chunk.sourcePath}-${chunk.pageNumber ?? index}`,
+        title: sourceTitle(chunk.sourcePath),
+        heading: chunk.pageNumber ? `Page ${chunk.pageNumber}` : "Web resource",
+        url: chunk.url ?? sourcePageUrl(chunk.sourcePath),
+      }))
+      .filter((source, index, all) =>
+        all.findIndex(candidate => candidate.url === source.url && candidate.title === source.title) === index
+      )
+  ));
 
   const stream = new ReadableStream({
     async start(controller) {
