@@ -19,6 +19,7 @@ export interface PdfJournalPage {
   pageSize: number;
   totalEntries: number;
   totalPages: number;
+  filter?: string;
 }
 
 const root = path.resolve(process.cwd(), "public", "assets", "website-knowledge");
@@ -89,10 +90,33 @@ function pdfUrl(filePath: string): string {
 }
 
 export async function getPdfJournalEntries(page = 1, pageSize = 10): Promise<PdfJournalPage> {
-  const totalEntries = pdfFiles.length;
+  return getPdfJournalEntriesFiltered(page, pageSize);
+}
+
+export function getPdfJournalFilters(): string[] {
+  return [...new Set(pdfFiles.flatMap((filePath) =>
+    path.relative(root, path.dirname(filePath))
+      .split(path.sep)
+      .filter(Boolean)
+      .map(displayName)
+  ))].sort((a, b) => a.localeCompare(b));
+}
+
+export async function getPdfJournalEntriesFiltered(
+  page = 1,
+  pageSize = 10,
+  filter = "",
+): Promise<PdfJournalPage> {
+  const normalizedFilter = filter.trim().toLowerCase();
+  const filteredFiles = normalizedFilter
+    ? pdfFiles.filter((filePath) =>
+        path.relative(root, path.dirname(filePath)).toLowerCase().includes(normalizedFilter)
+      )
+    : pdfFiles;
+  const totalEntries = filteredFiles.length;
   const totalPages = Math.max(1, Math.ceil(totalEntries / pageSize));
   const currentPage = Math.min(Math.max(1, page), totalPages);
-  const pageFiles = pdfFiles.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const pageFiles = filteredFiles.slice((currentPage - 1) * pageSize, currentPage * pageSize);
   const entries: PdfJournalEntry[] = [];
 
   for (const filePath of pageFiles) {
@@ -117,5 +141,5 @@ export async function getPdfJournalEntries(page = 1, pageSize = 10): Promise<Pdf
       pdfUrl: pdfUrl(filePath),
     });
   }
-  return { entries, page: currentPage, pageSize, totalEntries, totalPages };
+  return { entries, page: currentPage, pageSize, totalEntries, totalPages, filter: normalizedFilter };
 }

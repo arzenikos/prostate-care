@@ -3,13 +3,28 @@ import Layout from '@layouts/Layout.astro';
 import HubHero from '@components/astro/hero/HubHero.astro';
 import PlaceholderMedia from '@components/astro/media/PlaceholderMedia.astro';
 import { hubs } from '@contents/ui/site';
-import { getPdfJournalEntries } from '../../lib/research/pdfJournal';
+import { getPdfJournalEntriesFiltered, getPdfJournalFilters } from '../../lib/research/pdfJournal';
 
 const copy = hubs.research;
 const requestedPage = Number(Astro.url.searchParams.get('page') ?? '1');
-const pageData = await getPdfJournalEntries(Number.isFinite(requestedPage) ? requestedPage : 1, 10);
+const selectedFilter = Astro.url.searchParams.get('filter') ?? '';
+const filters = getPdfJournalFilters();
+const pageData = await getPdfJournalEntriesFiltered(
+  Number.isFinite(requestedPage) ? requestedPage : 1,
+  10,
+  selectedFilter,
+);
 const { entries } = pageData;
-const pageUrl = (page: number) => `/researcher-hub?page=${page}`;
+const pageUrl = (page: number) => {
+  const params = new URLSearchParams({ page: String(page) });
+  if (selectedFilter) params.set('filter', selectedFilter);
+  return `/researcher-hub?${params}`;
+};
+const filterUrl = (filter: string) => {
+  const params = new URLSearchParams({ page: '1' });
+  if (filter) params.set('filter', filter);
+  return `/researcher-hub?${params}`;
+};
 ---
 
 <Layout title="Research Knowledge Hub" hub="research">
@@ -22,23 +37,38 @@ const pageUrl = (page: number) => `/researcher-hub?page=${page}`;
     cta={{ label: copy.cta, href: copy.ctaHref }}
   />
   <section class="research">
-    <div class="stats">
-      <div class="stats__head">
+    <aside class="sidebar" aria-label="Research library filters">
+      <div class="sidebar__section">
+        <p class="eyebrow">Browse library</p>
+        <h2>Filter journals</h2>
+        <p class="sidebar__intro">Explore research by collection. Each page loads only ten entries.</p>
+        <nav class="filter-list" aria-label="Research collections">
+          <a class:list={{ active: !selectedFilter }} href={filterUrl('')}>All resources</a>
+          {filters.map((filter) => (
+            <a class:list={{ active: selectedFilter.toLowerCase() === filter.toLowerCase() }} href={filterUrl(filter)}>{filter}</a>
+          ))}
+        </nav>
+      </div>
+      <div class="sidebar__section stats">
         <h2>Statistics</h2>
-        <label class="filter">
-          Filter
-          <input type="checkbox" name="filter" />
-          <span>Off</span>
+        <PlaceholderMedia label="Placeholder: statistics chart" />
+        <p class="caption">Short stats summary.</p>
+      </div>
+    </aside>
+    <div class="feed">
+      <div class="feed__header">
+        <div>
+          <p class="eyebrow">Research library</p>
+          <p class="latest">{pageData.totalEntries} resources{selectedFilter ? ` in ${selectedFilter}` : ''}</p>
+        </div>
+        <label class="sort-label">
+          Showing <strong>{(pageData.page - 1) * pageData.pageSize + 1}–{Math.min(pageData.page * pageData.pageSize, pageData.totalEntries)}</strong>
         </label>
       </div>
-      <PlaceholderMedia label="Placeholder: statistics chart" />
-      <p class="caption">Short stats summary.</p>
-    </div>
-    <div class="feed">
-      <p class="latest">Journal library · {pageData.totalEntries} resources</p>
-      {entries.map((entry) => (
+      {entries.map((entry, index) => (
         <article class="journal-entry">
           <div class="feed__title">
+            <span class="entry-number">{String((pageData.page - 1) * pageData.pageSize + index + 1).padStart(2, '0')}</span>
             <h3><a href={entry.pdfUrl} target="_blank" rel="noopener noreferrer">{entry.title}</a></h3>
           </div>
           <p class="meta">{entry.date} · {entry.author} · {entry.journal}</p>
@@ -74,16 +104,15 @@ const pageUrl = (page: number) => `/researcher-hub?page=${page}`;
     max-width: var(--content-width);
     margin: 0 auto;
     display: grid;
-    grid-template-columns: 1.1fr 1fr;
-    gap: 2.5rem;
+    grid-template-columns: minmax(210px, 0.3fr) minmax(0, 1fr);
+    gap: 3rem;
     padding: 0.5rem 1.5rem 4rem;
   }
 
-  .stats__head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.8rem;
+  .sidebar {
+    align-self: start;
+    position: sticky;
+    top: 1.5rem;
   }
 
   h2,
@@ -92,12 +121,61 @@ const pageUrl = (page: number) => `/researcher-hub?page=${page}`;
     color: var(--color-navy);
   }
 
-  .filter {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    font-size: 0.85rem;
+  .sidebar__section {
+    padding: 1.25rem;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface-muted);
+  }
+
+  .sidebar__section + .sidebar__section {
+    margin-top: 1rem;
+  }
+
+  .sidebar__intro,
+  .caption {
     color: var(--color-text-muted);
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .eyebrow {
+    margin: 0 0 0.45rem;
+    color: var(--color-blue);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .filter-list {
+    display: grid;
+    gap: 0.2rem;
+    margin-top: 1.25rem;
+  }
+
+  .filter-list a {
+    padding: 0.55rem 0.65rem;
+    border-left: 3px solid transparent;
+    color: var(--color-text-muted);
+    font-size: 0.86rem;
+    text-decoration: none;
+  }
+
+  .filter-list a:hover,
+  .filter-list a:focus-visible,
+  .filter-list a.active {
+    border-left-color: var(--color-blue);
+    background: var(--color-surface);
+    color: var(--color-navy);
+  }
+
+  .stats {
+    overflow: hidden;
+  }
+
+  .stats h2 {
+    margin-bottom: 0.8rem;
+    font-size: 1rem;
   }
 
   .caption,
@@ -106,38 +184,90 @@ const pageUrl = (page: number) => `/researcher-hub?page=${page}`;
     color: var(--color-navy);
   }
 
+  .feed {
+    min-width: 0;
+  }
+
+  .feed__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--color-navy);
+  }
+
+  .sort-label {
+    color: var(--color-text-muted);
+    font-size: 0.82rem;
+    white-space: nowrap;
+  }
+
   .latest {
-    margin: 0 0 0.6rem;
+    margin: 0;
     color: #7b86c9;
     font-style: italic;
   }
 
   .feed__title {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
+    display: grid;
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+    align-items: start;
+    gap: 0.6rem;
+  }
+
+  .entry-number {
+    padding-top: 0.15rem;
+    color: var(--color-blue);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+
+  .feed h3 {
+    font-size: clamp(1.05rem, 1.5vw, 1.35rem);
+    line-height: 1.25;
   }
 
   .feed a {
     text-decoration: none;
   }
 
+  .feed h3 a:hover,
+  .feed h3 a:focus-visible {
+    color: var(--color-blue);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
   .meta,
   .tags {
     color: var(--color-navy);
-    font-size: 0.92rem;
+    font-size: 0.85rem;
+  }
+
+  .meta {
+    margin: 0.65rem 0 0.5rem 2.85rem;
+    font-weight: 650;
+  }
+
+  .desc {
+    margin: 0 0 0.8rem 2.85rem;
+    line-height: 1.6;
   }
 
   .tags {
-    text-align: right;
-    border-bottom: 1px solid var(--color-border);
+    margin: 0 0 0 2.85rem;
     padding-bottom: 1rem;
+    border-bottom: 1px solid var(--color-border);
+    color: var(--color-blue);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
   }
 
   .journal-entry {
-    padding: 0 0 1rem;
-    margin-bottom: 1rem;
+    padding: 1.35rem 0 0;
   }
 
   .pagination {
@@ -173,6 +303,26 @@ const pageUrl = (page: number) => `/researcher-hub?page=${page}`;
 
   @media (max-width: 860px) {
     .research {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .sidebar {
+      position: static;
+    }
+
+    .filter-list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .feed__header {
+      align-items: start;
+      flex-direction: column;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .filter-list {
       grid-template-columns: 1fr;
     }
   }
