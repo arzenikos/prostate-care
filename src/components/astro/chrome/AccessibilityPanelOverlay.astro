@@ -133,26 +133,23 @@ import LineIcon from '@components/astro/ui/LineIcon.astro';
     color-scheme: dark;
   }
 
+  .fade-element {
+    position: fixed;
+    top: 5em;
+    right: 1.6rem;
+    height: 100%;
+    z-index: 30;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+  }
 
-  /* CSS */
-.fade-element {
-  position: fixed;
-  top: 5em;
-  right: 1.6rem;
-  height: 100%;
-  z-index: 30;
-  opacity: 1;
-  visibility: visible;
-  transition: opacity 0.5s ease, visibility 0.5s ease;
-}
-
-/* Add this class directly to your HTML markup to start hidden */
-.fade-element.hidden {
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.9s ease, visibility 0.9s ease;
-}
-
+  /* Add this class directly to your HTML markup to start hidden */
+  .fade-element.hidden {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.9s ease, visibility 0.9s ease;
+  }
 </style>
 
 <script>
@@ -161,8 +158,6 @@ import LineIcon from '@components/astro/ui/LineIcon.astro';
   const FONT_SCALES = [1, 1.125, 1.25, 1.4] as const;
   const FONT_LABELS = ['Default', 'Large', 'Larger', 'Largest'];
 
-  // const panel = document.getElementById('a11y-panel') as HTMLElement;
-  // const overlay = document.getElementById('a11y-overlay') as HTMLElement;
   const themeToggle = document.getElementById('a11y-theme-toggle') as HTMLButtonElement;
   const fontSlider = document.getElementById('a11y-font-slider') as HTMLInputElement;
 
