@@ -53,7 +53,7 @@ import LineIcon from '@components/astro/ui/LineIcon.astro';
           class="a11y-font-slider"
           type="range"
           min="0"
-          max="3"
+          max="10"
           step="1"
           value="0"
           aria-label="Text size"
@@ -73,22 +73,20 @@ import LineIcon from '@components/astro/ui/LineIcon.astro';
     justify-content: center;
     width: 40px;
     height: 40px;
-    border-radius: 999px;
-    border: 1.5px solid var(--pamana-navy, #1c2340);
+    border-radius: 99%;
+    border: 1px solid var(--pamana-navy, #1c23406b);
     background: transparent;
     color: var(--pamana-navy, #1c2340);
     cursor: pointer;
   }
   .a11y-toggle:hover,
   .a11y-toggle[aria-expanded='true'] {
-    background: var(--pamana-navy, #1c2340);
-    color: var(--pamana-cream, #fbf1e2);
+    background: var(--pamana-navy, #1c234060);
   }
 
   .a11y-overlay {
     position: fixed;
     inset: 0;
-    /* background: #14141e40; */
     z-index: 40;
   }
 
@@ -99,7 +97,7 @@ import LineIcon from '@components/astro/ui/LineIcon.astro';
     height: 100%;
     width: 72px;
     /* background: #2b305006; */
-    color: #120d02;
+    color: #120d0294;
     z-index: 40;
     /* only 56px peeks out past the top edge when closed, instead of the full height */
     transform: translateY(calc(-100% + 10px));
@@ -127,18 +125,6 @@ import LineIcon from '@components/astro/ui/LineIcon.astro';
     flex-direction: column;
     align-items: center;
     gap: 2rem;
-  }
-
-  .a11y-close {
-    position: absolute;
-    top: 0.6rem;
-    right: 0.75rem;
-    background: none;
-    border: none;
-    color: inherit;
-    font-size: 1.4rem;
-    line-height: 1;
-    cursor: pointer;
   }
 
   .a11y-theme-toggle {
@@ -189,13 +175,11 @@ import LineIcon from '@components/astro/ui/LineIcon.astro';
     justify-content: center;
   }
   .a11y-font-slider {
-    width: 130px;
-    height: 24px;
+    width: 380px;
+    height: 5px;
     margin: 0;
     opacity: 0.7;
-    /* accent-color: #f4efe4; */
-    accent-color: #120d0270;
-
+    accent-color: #00007e;
     transform: rotate(-90deg);
   }
 
