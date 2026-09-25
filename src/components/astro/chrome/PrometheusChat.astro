@@ -132,6 +132,7 @@ const { persona = "patient" } = Astro.props;
 
   panel?.addEventListener("pointerdown", (event) => {
     if (event.pointerType === "mouse" && event.button !== 0) return;
+    if ((event.target as HTMLElement).closest("button, input, a")) return;
     gestureStartY = event.clientY;
     gestureStartX = event.clientX;
     gestureActive = true;

@@ -162,47 +162,98 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
   }
 
   function renderAnswer(text: string) {
+    function renderInline(value: string) {
+      const parts = value.split(/(\*\*[^*]+\*\*|\[[0-9]+\])/g);
+      return parts.map((part, index) => {
+        if (part.startsWith("**") && part.endsWith("**")) {
+          return (
+            <strong
+              key={index}
+              className="font-semibold"
+              style={{ color: CREAM, fontFamily: "inherit" }}
+            >
+              {part.slice(2, -2)}
+            </strong>
+          );
+        }
+        if (/^\[[0-9]+\]$/.test(part)) {
+          return <span key={index} className="font-semibold" style={{ color: ACCENT }}>{part}</span>;
+        }
+        return part;
+      });
+    }
+
     const blocks = text.split(/\n{2,}/);
     return blocks.map((block, i) => {
-      if (block.startsWith("## ")) {
+      if (/^### /.test(block)) {
+        return (
+          <h4 key={i} className="text-[12px] font-semibold uppercase tracking-[0.08em] mb-1.5 mt-3 first:mt-0" style={{ color: ACCENT }}>
+            {renderInline(block.replace(/^### /, ""))}
+          </h4>
+        );
+      }
+      if (/^## /.test(block)) {
         return (
           <h3 key={i} className="text-[15px] font-semibold mb-2 mt-3 first:mt-0" style={{ color: CREAM }}>
-            {block.replace(/^## /, "")}
+            {renderInline(block.replace(/^## /, ""))}
           </h3>
         );
       }
-      if (block.split("\n").every((l) => l.trim().startsWith("- ") || l.trim() === "")) {
-        const items = block.split("\n").filter((l) => l.trim().startsWith("- "));
+      const lines = block.split("\n").map((line) => line.trim()).filter(Boolean);
+      if (lines.length > 0 && lines.every((line) => /^[-*] /.test(line))) {
         return (
-          <ul key={i} className="text-[13px] leading-relaxed mb-3 list-disc pl-4" style={{ color: CREAM_DIM }}>
-            {items.map((item, j) => (
-              <li key={j}>{item.replace(/^- /, "")}</li>
+          <ul key={i} className="text-[13px] leading-relaxed mb-3 list-disc pl-4 space-y-1" style={{ color: CREAM_DIM }}>
+            {lines.map((item, j) => (
+              <li key={j}>{renderInline(item.replace(/^[-*] /, ""))}</li>
             ))}
           </ul>
         );
       }
+      if (lines.length > 0 && lines.every((line) => /^\d+[.)] /.test(line))) {
+        return (
+          <ol key={i} className="text-[13px] leading-relaxed mb-3 list-decimal pl-4 space-y-1" style={{ color: CREAM_DIM }}>
+            {lines.map((item, j) => (
+              <li key={j}>{renderInline(item.replace(/^\d+[.)] /, ""))}</li>
+            ))}
+          </ol>
+        );
+      }
+      if (lines.length === 1 && /^> /.test(lines[0])) {
+        return (
+          <blockquote key={i} className="mb-3 border-l-2 pl-3 text-[12px] italic leading-relaxed" style={{ borderColor: ACCENT, color: CREAM_DIM }}>
+            {renderInline(lines[0].replace(/^> /, ""))}
+          </blockquote>
+        );
+      }
       return (
         <p key={i} className="text-[13px] leading-relaxed mb-3" style={{ color: CREAM_DIM }}>
-          {block}
+          {renderInline(block)}
         </p>
       );
     });
   }
 
   return (
-    <div className="flex h-full min-h-0 flex-col">
+    <div
+      className="flex h-full min-h-0 flex-col"
+      style={{ fontFamily: "var(--font-sans)", fontSize: "13px" }}
+    >
       {messages.length === 0 && !loading && (
         <div className="mt-auto shrink-0 px-6 pb-3">
+          <p className="mb-1 text-center text-[11px] font-semibold uppercase tracking-[0.1em]" style={{ color: ACCENT }}>
+            Start a conversation
+          </p>
           <p className="text-[13px] mb-3 text-center" style={{ color: CREAM_DIM }}>
-            Start with a question about prostate cancer, treatment, or support.
+            Choose a question about prostate cancer, treatment, or support.
           </p>
           <div className="flex flex-wrap justify-center gap-2">
             {starterQuestions.map((starter) => (
               <button
                 key={starter}
                 type="button"
-                onClick={() => handleSend(starter)}
-                className="rounded-full px-3 py-2 text-left text-[12px] transition-colors hover:brightness-110"
+                onPointerDown={(event) => event.stopPropagation()}
+                onClick={() => void handleSend(starter)}
+                className="pointer-events-auto rounded-xl px-3 py-2.5 text-left text-[12px] leading-snug transition-colors hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-[#8B93F8]"
                 style={{ background: NAVY, color: CREAM, border: `1px solid ${HAIRLINE}` }}
               >
                 {starter}
@@ -259,10 +310,7 @@ export default function PrometheusChatContent({ persona = "patient" }: Props) {
                 <li key={source.slug + source.heading}>
                   <a
                     href={source.url}
-                    onClick={(event) => {
-                      event.preventDefault();
-                      setSelectedSource(source);
-                    }}
+                    onClick={() => setSelectedSource(source)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-left text-[11px] italic opacity-60 hover:opacity-100 transition-opacity underline"
