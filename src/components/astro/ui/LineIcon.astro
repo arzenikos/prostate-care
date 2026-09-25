@@ -2,9 +2,10 @@
 interface Props {
   name: 'mail' | 'pin' | 'help' | 'accessibility' | 'close' | 'github' | 'figma' | 'robot' | 'share' | 'bookmark' | 'external' | 'send' | 'chevron' | 'node';
   size?: number;
+  color?: string;
 }
 
-const { name, size = 27 } = Astro.props;
+const { name, size = 27, color = "currentColor" } = Astro.props;
 ---
 
 <svg
@@ -13,7 +14,7 @@ const { name, size = 27 } = Astro.props;
   height={size}
   viewBox="0 0 24 24"
   fill="none"
-  stroke="#00007e"
+  stroke={color || "#00007e"}
   stroke-width="1.3"
   stroke-linecap="round"
   stroke-linejoin="round"
@@ -35,7 +36,7 @@ const { name, size = 27 } = Astro.props;
     <g>
       <rect x="4" y="4" width="16" height="16" rx="2" />
       <path d="M9.5 9a2.5 2.5 0 1 1 3.4 2.3c-.8.4-1.4 1-1.4 1.9" />
-      <circle cx="12" cy="16.2" r="0.6" fill="currentColor" stroke="none" />
+      <circle cx="12" cy="16.2" r="0.6" fill={color} stroke="none" />
     </g>
   )}
   {name === 'close' && <path d="M6 6l12 12M18 6 6 18" />}
@@ -55,8 +56,8 @@ const { name, size = 27 } = Astro.props;
       <rect x="6" y="8" width="12" height="10" rx="2" />
       <circle cx="12" cy="5" r="1.4" />
       <path d="M12 6.4V8" />
-      <circle cx="9.5" cy="12.5" r="1" fill="currentColor" stroke="none" />
-      <circle cx="14.5" cy="12.5" r="1" fill="currentColor" stroke="none" />
+      <circle cx="9.5" cy="12.5" r="1" fill={color} stroke="none" />
+      <circle cx="14.5" cy="12.5" r="1" fill={color} stroke="none" />
     </g>
   )}
   {name === 'share' && (
@@ -90,11 +91,11 @@ const { name, size = 27 } = Astro.props;
   )}
   {name === 'accessibility' && (
     <g>
-      <path fill="currentColor" d="M10.809 5.268q-.501-.5-.501-1.191q0-.69.5-1.191q.502-.502 1.192-.502t1.191.502q.501.5.501 1.191q0 .69-.5 1.191q-.502.501-1.192.501t-1.191-.5M9.808 21.5V8.423H3.962v-1h16.077v1h-5.847V21.5h-1V16h-2.384v5.5z"/>
+      <path fill={color} d="M10.809 5.268q-.501-.5-.501-1.191q0-.69.5-1.191q.502-.502 1.192-.502t1.191.502q.501.5.501 1.191q0 .69-.5 1.191q-.502.501-1.192.501t-1.191-.5M9.808 21.5V8.423H3.962v-1h16.077v1h-5.847V21.5h-1V16h-2.384v5.5z"/>
     </g>
   )}
   {name === 'close' && (
-    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.50">
+    <g fill="none" stroke={color} stroke-linecap="round" stroke-width="1.50">
       <path d="M19.0071 5L15.5071 8.5"/><path d="M12.0071 12L5.00708 19"/><path d="M19 19L5 5"/>
     </g>
   )}

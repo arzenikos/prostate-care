@@ -3,7 +3,7 @@ import Layout from '@layouts/Layout.astro';
 import HubHero from '@components/astro/hero/HubHero.astro';
 import PlaceholderMedia from '@components/astro/media/PlaceholderMedia.astro';
 import { hubs } from '@contents/ui/site';
-import { getPdfJournalEntriesFiltered, getPdfJournalFilters } from '../../lib/research/pdfJournal';
+import { getPdfJournalEntriesFiltered, getPdfJournalFilters } from '@library/research/pdfJournal';
 
 const copy = hubs.research;
 const requestedPage = Number(Astro.url.searchParams.get('page') ?? '1');
@@ -199,7 +199,7 @@ const filterUrl = (filter: string) => {
 
   .sort-label {
     color: var(--color-text-muted);
-    font-size: 0.82rem;
+    font-size: 0.9rem;
     white-space: nowrap;
   }
 
@@ -207,6 +207,7 @@ const filterUrl = (filter: string) => {
     margin: 0;
     color: #7b86c9;
     font-style: italic;
+    font-size: 0.9rem;
   }
 
   .feed__title {
