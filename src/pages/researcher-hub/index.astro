@@ -1,12 +1,12 @@
 ---
 import Layout from '@layouts/Layout.astro';
 import HubHero from '@components/astro/hero/HubHero.astro';
-import LineIcon from '@components/astro/ui/LineIcon.astro';
 import PlaceholderMedia from '@components/astro/media/PlaceholderMedia.astro';
 import { hubs } from '@contents/ui/site';
-import { researchFeed } from '@contents/ui/article-paths';
+import { getPdfJournalEntries } from '../../lib/research/pdfJournal';
 
 const copy = hubs.research;
+const entries = await getPdfJournalEntries();
 ---
 
 <Layout title="Research Knowledge Hub" hub="research">
@@ -32,21 +32,17 @@ const copy = hubs.research;
       <p class="caption">Short stats summary.</p>
     </div>
     <div class="feed">
-      <p class="latest">Latest</p>
-      <article>
-        <div class="feed__title">
-          <h3>
-
-            <a href=`researcher-hub/${researchFeed.href}`>
-              {researchFeed.title}
-            </a>
-          </h3>
-          <LineIcon name="bookmark" />
-        </div>
-        <p class="meta">{researchFeed.date} • {researchFeed.author} • {researchFeed.affiliation}</p>
-        <p class="desc">{researchFeed.description}</p>
-        <p class="tags">{researchFeed.tags.join(' | ').toUpperCase()}</p>
-      </article>
+      <p class="latest">Journal library · {entries.length} resources</p>
+      {entries.map((entry) => (
+        <article class="journal-entry">
+          <div class="feed__title">
+            <h3><a href={entry.pdfUrl} target="_blank" rel="noopener noreferrer">{entry.title}</a></h3>
+          </div>
+          <p class="meta">{entry.date} · {entry.author} · {entry.journal}</p>
+          <p class="desc">{entry.description}</p>
+          <p class="tags">{entry.tags.length ? entry.tags.join(' · ').toUpperCase() : 'RESEARCH'}</p>
+        </article>
+      ))}
     </div>
   </section>
 </Layout>
@@ -115,6 +111,11 @@ const copy = hubs.research;
     text-align: right;
     border-bottom: 1px solid var(--color-border);
     padding-bottom: 1rem;
+  }
+
+  .journal-entry {
+    padding: 0 0 1rem;
+    margin-bottom: 1rem;
   }
 
   @media (max-width: 860px) {
