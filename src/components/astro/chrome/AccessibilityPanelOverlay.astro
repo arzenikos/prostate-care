@@ -1,16 +1,4 @@
 ---
-// src/components/AccessibilityPanel.astro
-//
-// Usage: drop <AccessibilityPanel /> once in your shared header/layout,
-// next to your other header icons (contact, find-a-clinic, FAQ).
-//
-// It renders:
-//  - a toggle button (the "person in circle" icon) that opens/closes the panel
-//  - a slide-out panel with a theme toggle and a font-size slider
-//
-// State (theme + font scale) is persisted to localStorage and applied to
-// <html> as `data-theme` and `--font-scale`, so you can read those anywhere
-// in your global CSS.
 import LineIcon from '@components/astro/ui/LineIcon.astro';
 ---
 
@@ -55,7 +43,6 @@ import LineIcon from '@components/astro/ui/LineIcon.astro';
 </div>
 
 <style>
-  /* ---- palette: reuse your existing Pamana tokens if you have them ---- */
   #toggle-btn {
     display: inline-flex;
     align-items: center;
@@ -121,7 +108,6 @@ import LineIcon from '@components/astro/ui/LineIcon.astro';
     font-size: 1.4rem;
   }
 
-  /* vertical range slider: fix the track's footprint, then rotate the input */
   .a11y-font-slider-wrap {
     width: 24px;
     height: 130px;
@@ -143,7 +129,7 @@ import LineIcon from '@components/astro/ui/LineIcon.astro';
     font-size: calc(100% * var(--font-scale, 1));
   }
   :global(html[data-theme='dark']) {
-    /* Swap these for your real dark-mode tokens */
+    /* Swap these for real dark-mode tokens */
     color-scheme: dark;
   }
 
@@ -158,7 +144,6 @@ import LineIcon from '@components/astro/ui/LineIcon.astro';
   opacity: 1;
   visibility: visible;
   transition: opacity 0.5s ease, visibility 0.5s ease;
-  /* transform: translateY(calc(-100% + 10px)); */
 }
 
 /* Add this class directly to your HTML markup to start hidden */
