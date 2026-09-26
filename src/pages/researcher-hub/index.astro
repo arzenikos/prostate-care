@@ -40,8 +40,8 @@ const filterUrl = (filter: string) => {
     <aside class="sidebar" aria-label="Research library filters">
       <div class="sidebar__section">
         <p class="eyebrow">Browse library</p>
-        <h2>Filter journals</h2>
-        <p class="sidebar__intro">Explore research by collection. Each page loads only ten entries.</p>
+        <h2>Journals</h2>
+        <p class="sidebar__intro">Explore research by collection.</p>
         <nav class="filter-list" aria-label="Research collections">
           <a class:list={{ active: !selectedFilter }} href={filterUrl('')}>All resources</a>
           {filters.map((filter) => (
@@ -182,6 +182,7 @@ const filterUrl = (filter: string) => {
   .desc {
     font-style: italic;
     color: var(--color-navy);
+    font-size: 0.85rem;
   }
 
   .feed {

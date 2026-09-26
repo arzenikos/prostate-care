@@ -1,17 +1,13 @@
 ---
-import { getCollection, render } from 'astro:content';
+import { getEntry, render } from 'astro:content';
 import ArticleLayout from '@layouts/ArticleLayout.astro';
 
-export async function getStaticPaths() {
-  const papers = await getCollection('researchers', ({ data }) => !data.draft);
-
-  return papers.map((paper) => ({
-    params: { slug: paper.id },
-    props: { paper },
-  }));
+const paper = Astro.props.paper ?? (Astro.params.slug
+  ? await getEntry('researchers', Astro.params.slug)
+  : undefined);
+if (!paper) {
+  return Astro.redirect('/researcher-hub', 404);
 }
-
-const { paper } = Astro.props;
 const { Content } = await render(paper);
 const heading = paper.data.heading ?? paper.data.title;
 ---

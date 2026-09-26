@@ -23,6 +23,7 @@ export interface PdfJournalPage {
 }
 
 const root = path.resolve(process.cwd(), "public", "assets", "website-knowledge");
+const metadataPath = path.resolve(process.cwd(), "src", "data", "research-journal.json");
 
 function displayName(value: string): string {
   return value
@@ -89,17 +90,38 @@ function pdfUrl(filePath: string): string {
     .join("/")}`;
 }
 
+function loadJournalMetadata(): PdfJournalEntry[] {
+  if (!fs.existsSync(metadataPath)) return [];
+  try {
+    const parsed = JSON.parse(fs.readFileSync(metadataPath, "utf8")) as {
+      version?: number;
+      entries?: PdfJournalEntry[];
+    };
+    if (!Array.isArray(parsed.entries)) {
+      throw new Error("research-journal.json must contain an entries array");
+    }
+    return parsed.entries;
+  } catch (error) {
+    throw new Error(`Unable to load journal metadata from ${metadataPath}`, { cause: error });
+  }
+}
+
+const journalMetadata = loadJournalMetadata();
+const metadataByPdfUrl = new Map(journalMetadata.map((entry) => [entry.pdfUrl, entry]));
+
 export async function getPdfJournalEntries(page = 1, pageSize = 10): Promise<PdfJournalPage> {
   return getPdfJournalEntriesFiltered(page, pageSize);
 }
 
 export function getPdfJournalFilters(): string[] {
-  return [...new Set(pdfFiles.flatMap((filePath) =>
+  const metadataFilters = journalMetadata.flatMap((entry) => entry.tags);
+  const folderFilters = pdfFiles.flatMap((filePath) =>
     path.relative(root, path.dirname(filePath))
       .split(path.sep)
       .filter(Boolean)
       .map(displayName)
-  ))].sort((a, b) => a.localeCompare(b));
+  );
+  return [...new Set([...metadataFilters, ...folderFilters])].sort((a, b) => a.localeCompare(b));
 }
 
 export async function getPdfJournalEntriesFiltered(
@@ -109,8 +131,13 @@ export async function getPdfJournalEntriesFiltered(
 ): Promise<PdfJournalPage> {
   const normalizedFilter = filter.trim().toLowerCase();
   const filteredFiles = normalizedFilter
-    ? pdfFiles.filter((filePath) =>
-        path.relative(root, path.dirname(filePath)).toLowerCase().includes(normalizedFilter)
+    ? pdfFiles.filter((filePath) => {
+        const metadata = metadataByPdfUrl.get(pdfUrl(filePath));
+        const searchable = metadata
+          ? [metadata.title, metadata.author, metadata.journal, ...metadata.tags].join(" ")
+          : path.relative(root, path.dirname(filePath));
+        return searchable.toLowerCase().includes(normalizedFilter);
+      }
       )
     : pdfFiles;
   const totalEntries = filteredFiles.length;
@@ -122,6 +149,11 @@ export async function getPdfJournalEntriesFiltered(
   for (const filePath of pageFiles) {
     const relativePath = path.relative(root, filePath);
     const title = displayName(path.basename(filePath));
+    const metadata = metadataByPdfUrl.get(pdfUrl(filePath));
+    if (metadata) {
+      entries.push(metadata);
+      continue;
+    }
     let text = "";
     try {
       text = (await extractPage(filePath)).text.trim();
