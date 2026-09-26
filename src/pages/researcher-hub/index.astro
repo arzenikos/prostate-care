@@ -8,7 +8,7 @@ import { getPdfJournalEntriesFiltered, getPdfJournalFilters } from '@library/res
 const copy = hubs.research;
 const requestedPage = Number(Astro.url.searchParams.get('page') ?? '1');
 const selectedFilter = Astro.url.searchParams.get('filter') ?? '';
-const filters = getPdfJournalFilters();
+const filters = await getPdfJournalFilters();
 const pageData = await getPdfJournalEntriesFiltered(
   Number.isFinite(requestedPage) ? requestedPage : 1,
   10,

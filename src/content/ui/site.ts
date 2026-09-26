@@ -1,5 +1,5 @@
 export const brand = {
-  name: 'PAMANA',
+  name: 'PROMETHEUS',
   tagline: 'Prostate Cancer Support Website',
   teReo: 'Te tautoko mō te matepukupuku repe tāne',
 };

@@ -73,14 +73,10 @@ function makeDescription(text: string, title: string): string {
   return `This journal resource explores ${title.toLowerCase()}.`;
 }
 
-function makeTags(filePath: string, text: string): string[] {
-  const folderTags = path.relative(root, path.dirname(filePath))
-    .split(path.sep)
-    .filter(Boolean)
-    .map(displayName);
-  const keywords = ["prostate cancer", "diet", "exercise", "radiation", "medication", "quality of life", "mental health", "treatment"];
+function makeTags(text: string): string[] {
+  const keywords = ["prostate cancer"];
   const keywordTags = keywords.filter((keyword) => text.toLowerCase().includes(keyword));
-  return [...new Set([...folderTags, ...keywordTags])].slice(0, 6);
+  return keywordTags;
 }
 
 function pdfUrl(filePath: string): string {
@@ -108,20 +104,53 @@ function loadJournalMetadata(): PdfJournalEntry[] {
 
 const journalMetadata = loadJournalMetadata();
 const metadataByPdfUrl = new Map(journalMetadata.map((entry) => [entry.pdfUrl, entry]));
+let journalEntriesPromise: Promise<PdfJournalEntry[]> | undefined;
+
+function getJournalEntries(): Promise<PdfJournalEntry[]> {
+  if (!journalEntriesPromise) {
+    journalEntriesPromise = Promise.all(pdfFiles.map(async (filePath) => {
+      const metadata = metadataByPdfUrl.get(pdfUrl(filePath));
+      if (metadata) return metadata;
+
+      const relativePath = path.relative(root, filePath);
+      const title = displayName(path.basename(filePath));
+      let text = "";
+      try {
+        text = (await extractPage(filePath)).text.trim();
+      } catch (error) {
+        console.error(`[research-hub] failed to extract PDF metadata from ${relativePath}`, error);
+      }
+
+      const id = relativePath.replace(/\.pdf$/i, "").replace(/[^\w-]+/g, "-").replace(/-+/g, "-").toLowerCase();
+      return {
+        id,
+        title,
+        description: makeDescription(text, title),
+        date: extractDate(text),
+        author: extractAuthor(text),
+        journal: extractJournal(text),
+        tags: makeTags(text),
+        pdfUrl: pdfUrl(filePath),
+      };
+    }));
+  }
+  return journalEntriesPromise;
+}
 
 export async function getPdfJournalEntries(page = 1, pageSize = 10): Promise<PdfJournalPage> {
   return getPdfJournalEntriesFiltered(page, pageSize);
 }
 
-export function getPdfJournalFilters(): string[] {
-  const metadataFilters = journalMetadata.flatMap((entry) => entry.tags);
-  const folderFilters = pdfFiles.flatMap((filePath) =>
-    path.relative(root, path.dirname(filePath))
-      .split(path.sep)
-      .filter(Boolean)
-      .map(displayName)
-  );
-  return [...new Set([...metadataFilters, ...folderFilters])].sort((a, b) => a.localeCompare(b));
+export async function getPdfJournalFilters(): Promise<string[]> {
+  const entries = await getJournalEntries();
+  const filters = new Map<string, string>();
+  for (const entry of entries) {
+    for (const tag of entry.tags) {
+      const normalizedTag = tag.trim().toLowerCase();
+      if (normalizedTag && !filters.has(normalizedTag)) filters.set(normalizedTag, tag.trim());
+    }
+  }
+  return [...filters.values()].sort((a, b) => a.localeCompare(b));
 }
 
 export async function getPdfJournalEntriesFiltered(
@@ -130,48 +159,15 @@ export async function getPdfJournalEntriesFiltered(
   filter = "",
 ): Promise<PdfJournalPage> {
   const normalizedFilter = filter.trim().toLowerCase();
-  const filteredFiles = normalizedFilter
-    ? pdfFiles.filter((filePath) => {
-        const metadata = metadataByPdfUrl.get(pdfUrl(filePath));
-        const searchable = metadata
-          ? [metadata.title, metadata.author, metadata.journal, ...metadata.tags].join(" ")
-          : path.relative(root, path.dirname(filePath));
-        return searchable.toLowerCase().includes(normalizedFilter);
-      }
+  const allEntries = await getJournalEntries();
+  const filteredEntries = normalizedFilter
+    ? allEntries.filter((entry) =>
+        entry.tags.some((tag) => tag.trim().toLowerCase() === normalizedFilter)
       )
-    : pdfFiles;
-  const totalEntries = filteredFiles.length;
+    : allEntries;
+  const totalEntries = filteredEntries.length;
   const totalPages = Math.max(1, Math.ceil(totalEntries / pageSize));
   const currentPage = Math.min(Math.max(1, page), totalPages);
-  const pageFiles = filteredFiles.slice((currentPage - 1) * pageSize, currentPage * pageSize);
-  const entries: PdfJournalEntry[] = [];
-
-  for (const filePath of pageFiles) {
-    const relativePath = path.relative(root, filePath);
-    const title = displayName(path.basename(filePath));
-    const metadata = metadataByPdfUrl.get(pdfUrl(filePath));
-    if (metadata) {
-      entries.push(metadata);
-      continue;
-    }
-    let text = "";
-    try {
-      text = (await extractPage(filePath)).text.trim();
-    } catch (error) {
-      console.error(`[research-hub] failed to extract PDF metadata from ${relativePath}`, error);
-    }
-
-    const id = relativePath.replace(/\.pdf$/i, "").replace(/[^\w-]+/g, "-").replace(/-+/g, "-").toLowerCase();
-    entries.push({
-      id,
-      title,
-      description: makeDescription(text, title),
-      date: extractDate(text),
-      author: extractAuthor(text),
-      journal: extractJournal(text),
-      tags: makeTags(filePath, text),
-      pdfUrl: pdfUrl(filePath),
-    });
-  }
+  const entries = filteredEntries.slice((currentPage - 1) * pageSize, currentPage * pageSize);
   return { entries, page: currentPage, pageSize, totalEntries, totalPages, filter: normalizedFilter };
 }
