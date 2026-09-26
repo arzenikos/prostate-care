@@ -101,11 +101,11 @@ export const overlays = {
     body: 'Sign up to receive monthly guides, community stories, and the latest clinical insights to support you, your whānau, and your healthcare team.',
     footerLink: { label: 'See all newsletters', href: '/newsletters' },
   },
-  clinics: {
-    id: 'clinics',
-    heading: 'Find a clinic near me',
-    body: 'Find a healthcare team, seek a second opinion, and search for accredited urologists and cancer centres across New Zealand.',
-    footerLink: { label: 'Search clinics', href: '/clinics' },
+  "support-and-services": {
+    id: 'support-and-services',
+    heading: 'Support and Services',
+    body: 'Find a clinic near you, connect with support groups, work with your healthcare team, seek a second opinion, and explore accredited urologists and cancer centres across New Zealand.',
+    footerLink: { label: 'Find Care and Community Support', href: '/support-and-services' },
   },
   node: {
     id: 'node',
