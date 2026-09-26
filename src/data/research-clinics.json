@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "id": "clinic-places-info-sheets-clinic-and-places-info-sheets-communityinfusionservicebrochure",
+      "title": "Clinic and Places Info sheets CommunityInfusionServiceBrochure",
+      "description": "July 2022 BurwoodInfusion Service (BIS) to the Burwood Infusion",
+      "date": "2022",
+      "author": "purposely designed infusion suite. The Service is provided by",
+      "journal": "Journal",
+      "tags": [
+        "Clinic & Places Info sheets"
+      ],
+      "pdfUrl": "/assets/pdf/Clinic%20%26%20Places%20Info%20sheets/Clinic-and-Places-Info-sheets-CommunityInfusionServiceBrochure.pdf"
+    },
+    {
+      "id": "clinic-places-info-sheets-clinic-and-places-info-sheets-cs-info-sheet-radiation-treatment",
+      "title": "Clinic and Places Info sheets CS Info Sheet Radiation Treatment",
+      "description": "Information SheetRadiation treatment/ Haumanu irarukeThis information sheet has been written to support you during radiation",
+      "date": "Date",
+      "author": "more about radiation treatment,",
+      "journal": "Journal",
+      "tags": [
+        "Clinic & Places Info sheets",
+        "radiation",
+        "Treatment"
+      ],
+      "pdfUrl": "/assets/pdf/Clinic%20%26%20Places%20Info%20sheets/Clinic-and-Places-Info-sheets-CS-Info-Sheet-Radiation-Treatment.pdf"
+    },
+    {
+      "id": "diet-related-articles-diet-and-heart-disease-diet-and-heart-disease-2009-09-02-caldwell-b-esselstyn-transcripts",
+      "title": "Diet and Heart Disease 2009 09 02 caldwell b esselstyn transcripts",
+      "description": "Staying Healthy Today Radio ‐ ©2009 ‐ Prescription 2000,",
+      "date": "2009",
+      "author": "Staying Healthy Today Radio ‐ ©2009 ‐ Prescription 2000, Inc. – (916) 716‐2295 ‐ www.prescription2000.com",
+      "journal": "School of Medicine",
+      "tags": [
+        "Diet", 
+        "Heart Disease"
+      ],
+      "pdfUrl": "/assets/website-knowledge/Diet%20Related%20Articles/Diet%20and%20Heart%20Disease/Diet-and-Heart-Disease-2009-09-02-caldwell-b-esselstyn-transcripts.pdf"
+    }
+  ]
+}

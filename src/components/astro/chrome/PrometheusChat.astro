@@ -109,7 +109,7 @@ const { persona = "patient" } = Astro.props;
 
   toggle?.addEventListener("click", openPanel);
   function setExpandedState(expanded: boolean) {
-    if (!panel || !rise) return;
+    if (!panel || !rise || !shell) return;
     isExpanded = expanded;
     shell.classList.toggle("is-tall", expanded);
     shell.classList.toggle("is-lifted", expanded);
