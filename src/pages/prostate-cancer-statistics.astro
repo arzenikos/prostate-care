@@ -6,7 +6,6 @@ export const blueBeaconClinics = [
     name: "St George's Cancer Care Centre",
     description: "Cancer treatment center in Christchurch",
     thumbnail: "/assets/maps/St.George.jpg",
-    embedMapThumbnail:"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d46279.787764532404!2d172.58323698298642!3d-43.533894868647955!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6d318bb2425aaaab%3A0xd8007d5532f30a29!2sSt%20George's%20Cancer%20Care%20Centre!5e0!3m2!1sen!2snz!4v1790468282141!5m2!1sen!2snz",
     address: [
       "131 Leinster Road, Merivale, Christchurch 8014",
       "New Zealand"
@@ -18,7 +17,6 @@ export const blueBeaconClinics = [
     name: "Oncology",
     description: "Cancer treatment center",
     thumbnail: "/assets/maps/Oncology.jpg",
-    embedMapThumbnail:"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d46279.787764532404!2d172.58323698298642!3d-43.533894868647955!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6d318a4025c7f4b5%3A0xfdca8809ff9236c7!2sOncology!5e0!3m2!1sen!2snz!4v1790468252403!5m2!1sen!2snz",
     address: [
       "2 Riccarton Avenue, Christchurch Central City, Christchurch 8011, New Zealand"
     ],
@@ -30,7 +28,6 @@ export const blueBeaconClinics = [
     name: "St George’s Hospital",
     description: "Private hospital | Opens 24 Hours",
     thumbnail: "/assets/maps/St.GeorgeHospital.jpg",
-    embedMapThumbnail:"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2893.6042051076356!2d172.61617397545263!3d-43.51059167110925!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6d318bb3d9c32c67%3A0xb9caa473823d9fe0!2sSt%20George%E2%80%99s%20Hospital!5e0!3m2!1sen!2snz!4v1790467925996!5m2!1sen!2snz",
     address: [
       "249 Papanui Road, Strowan, Christchurch 8014, New Zealand"
     ],
@@ -47,7 +44,7 @@ export const blueBeaconGroups = [
     recurrence: "Every Monday from 10am to 11am",
     type: "Recurring",
     location: "",
-    link: "",
+    link: "", // optional external link
   },
   {
     region: "Canterbury - West Coast",
@@ -77,44 +74,42 @@ const {
 ---
 
 <Layout title={title}>
-  <div class="support-and-services-container">
-    <h1>Clinics</h1>
-    <div class="grid gap-10 md:grid-cols-2 lg:grid-cols-3 mt-6 py-1">
-      {blueBeaconClinics.map(({ name, description, embedMapThumbnail, address, phone, link }, i) => (
+  <div class="container mx-auto px-5 md:px-25 pt-10 pb-25">
+    <h2>Clinics</h2>
+    <div class="grid mt-6">
+      {blueBeaconClinics.map(({ name, description, thumbnail, address, phone, link }, i) => (
         <a
           href={link}
           target="_blank"
           rel="noopener noreferrer"
-          class="block py-1 rounded-sm overflow-hidden shadow-md bg-[var(--color-palette-four)] hover:shadow-lg transition-shadow duration-300 no-underline"
+          class="block w-full max-w-sm rounded-xl overflow-hidden shadow-md bg-[var(--color-palette-four)] hover:shadow-lg transition-shadow duration-300 no-underline"
           aria-label={`Open Google Maps for ${name}`}
         >
-          <div class="bg-gray-800">
-            <iframe src={embedMapThumbnail} width="400" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+          <div class="h-40 w-full bg-gray-800">
+            <img
+              src={thumbnail}
+              alt={`Map thumbnail for ${name}`}
+              class="w-full h-full object-cover"
+            />
           </div>
           {/* <!-- Card content --> */}
           <div class="p-4">
-            <p class="text-lg font-bold text-[var(--color-palette-one)] mb-1 group-hover:underline underline-offset-2">
-              {name || 'Location Name'}
-            </p>
-            <p class="clinic-description font-semibold text-[var(--color-palette-two)] mb-2">
-              {description || 'Location Description'}
-            </p>
-            <p class="text-sm text-[var(--color-palette-two)] whitespace-pre-line leading-relaxed">
+            <h3 class="text-lg font-bold text-[var(--color-palette-one)] mb-1">{name || 'Location Name'}</h3>
+            <h4 class="text-md font-semibold text-[var(--color-palette-two)] mb-1">{description || 'Location Description'}</h4>
+            <p class="text-sm text-[var(--color-palette-two)] whitespace-pre-line">
               {address.join('\n')}
             </p>
             {phone && (
-              <p class="text-sm text-[var(--color-palette-two)] mt-2 flex items-center gap-1">
-                <span aria-hidden="true">📞</span> {phone}
-              </p>
+              <p class="text-sm text-[var(--color-palette-two)] mt-2">📞 {phone}</p>
             )}
           </div>
         </a>
       ))}
     </div>
 
-    <hr class=`my-20 border-t border-[var(--color-palette-gray)]` />
+    <hr class="my-10 border-t border-[var(--color-palette-gray)]" />
 
-    <h1>Support Groups</h1>
+    <h2>Support Groups</h2>
     <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mt-8">
       {blueBeaconGroups.map((group) => (
         <div class="bg-white shadow-md rounded-xl border border-neutral-200 p-6 flex flex-col justify-between hover:shadow-lg transition-all duration-200">
@@ -151,43 +146,14 @@ const {
       ))}
     </div>
 
-    <hr class=`my-20 border-t border-[var(--color-palette-gray)]` />
+    <hr class="my-10 border-t border-[var(--color-palette-gray)]" />
     
     <div class="mt-15 bg-[var(--color-palette-one)] text-[var(--color-palette-five)] p-7 rounded-lg">
-      <h1>Looking for more support options near you?</h1>
-      <p class="body-more-options">Many of these listings are provided through the Cancer Society of New Zealand, which works across Aotearoa to connect people and whānau facing cancer with compassionate, community-based care and services.</p>
-      <p class="body-more-options-cta mt-7">
+      <strong>Looking for more support options near you?</strong>
+      <p >Many of these listings are provided through the Cancer Society of New Zealand, which works across Aotearoa to connect people and whānau facing cancer with compassionate, community-based care and services.</p>
+      <p class="mt-7">
         🔗 Explore more support groups at <a href="https://www.cancer.org.nz/">cancer.org.nz</a>
       </p>
     </div>
   </div>
 </Layout>
-<style>
-  h1 {
-    font-size: 2rem;
-    font-weight: 700;
-  }
-  .support-and-services-container {
-    padding: 3rem;
-  }
-
-  .clinic-description {
-    font-size: 1rem;
-  }
-
-  .body-more-options {
-    opacity: 0.8;
-    font-size: 1.4rem;
-    font-weight: 500;
-    width: 60%;
-  }
-
-  .body-more-options-cta {
-    font-size: 1.1rem;
-    font-weight: 260;
-  }
-
-  .clinic-card-content {
-    background-color: black;
-  }
-</style>

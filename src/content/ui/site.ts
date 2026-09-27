@@ -89,7 +89,7 @@ export const hubs = {
     intro:
       'Explore peer-reviewed clinical trial data, pharmacokinetic analyses, and epidemiological statistics shaping modern prostate oncology.',
     cta: 'View NZ and global data',
-    ctaHref: '/blueprint/bluestats',
+    ctaHref: '/prostate-cancer-statistics',
     illustration: 'path-cards/path-researcher-hub',
   },
 };
