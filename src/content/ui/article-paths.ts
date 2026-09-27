@@ -118,9 +118,11 @@ export const patientSections: PathSection[] = [
 ];
 
 export const whanauCards: TopicCard[] = [
-  { label: 'Understanding your support role', href: 'first-post', iconLabel: 'Placeholder: dancing figures icon' },
-  { label: 'Supporting daily life & well-being', href: 'second-post', iconLabel: 'Placeholder: dancing figures icon' },
-  { label: 'Emotional support & communication', href: 'third-post', iconLabel: 'Placeholder: dancing figures icon' },
+  { label: 'Understanding your support role', href: 'understanding-your-support-role', iconLabel: 'Placeholder: dancing figures icon' },
+  { label: 'Supporting daily life & well-being', href: 'supporting-daily-life-and-well-being', iconLabel: 'Placeholder: dancing figures icon' },
+  { label: 'Emotional support & communication', href: 'emotional-support-and-communication', iconLabel: 'Placeholder: dancing figures icon' },
+  { label: 'Understanding the Clinical State or Treatment Stage', href: 'clinical-state-and-treatment-stage', iconLabel: 'Placeholder: dancing figures icon' },
+  { label: 'Knowing Where to Find Reliable Information', href: 'finding-reliable-information', iconLabel: 'Placeholder: dancing figures icon' },
 ];
 
 export const researchFeed = {

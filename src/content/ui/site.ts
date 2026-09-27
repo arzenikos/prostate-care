@@ -74,7 +74,7 @@ export const hubs = {
     ],
     heading: 'Whānau & Friends Support Hub',
     intro:
-      'To help you find the right answers without the noise, please select the clinical state or treatment stage that best describes where you or your loved one are today. We will instantly tailor the page to show only what is relevant to you.',
+      'When someone you care about is facing prostate cancer, it can be hard to know where to begin. This space is here to help you feel informed, steady, and supported as you walk alongside them.',
     sectionTitle: 'The Basics You Need',
     illustration: 'path-cards/path-family-corner',
   },

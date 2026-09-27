@@ -17,7 +17,7 @@ import { brand } from '@contents/ui/site';
 <script>
   const splash = document.getElementById('splash-screen');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const delay = reduceMotion ? 0 : 100;
+  const delay = reduceMotion ? 0 : 1500;
 
   window.setTimeout(() => {
     splash?.classList.add('is-done');

@@ -41,6 +41,7 @@ functions/*.map
 # Assets
 public/assets/*
 public/assets/
+db/**/*
 
 
 # pgvector
