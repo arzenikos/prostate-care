@@ -1,31 +1,85 @@
 ---
 import Layout from '@layouts/Layout.astro';
-import PlaceholderMedia from '@components/astro/media/PlaceholderMedia.astro';
 
 const newsArticles = [
   { title: 'New Research Findings', date: '15 June 2026', summary: 'Promising new approaches to treatment and prevention.' },
   { title: 'Community Event Success', date: '28 May 2026', summary: 'A community event brought people together for awareness and support.' },
   { title: 'New Support Resources', date: '10 May 2026', summary: 'New resources to help individuals and families navigate their journey.' },
 ];
+
+// Rotating visual themes — extend this array if you add more categories later.
+const themes = [
+  {
+    icon:"search",
+    top: '#1e3a5f',
+    bottom: '#0f2038',
+    accent: '#2b6cb0',
+  },
+  {
+    icon:"people",
+    top: '#30594a',
+    bottom: '#16281f',
+    accent: '#388e6c',
+  },
+  {
+    icon:"book",
+    top: '#5c3a5c',
+    bottom: '#301c36',
+    accent: '#a35aa3',
+  },
+];
 ---
 
-<Layout title="News | Pamana">
+<Layout title="Newsletters">
   <section class="news">
     <h1>Latest news</h1>
     <div class="grid">
-      {newsArticles.map((article) => (
-        <article>
-          <PlaceholderMedia label={`Placeholder: ${article.title} image`} />
-          <p>{article.date}</p>
-          <h2>{article.title}</h2>
-          <p>{article.summary}</p>
-        </article>
-      ))}
+      {newsArticles.map((article, i) => {
+        const theme = themes[i % themes.length];
+        return (
+          <article
+            class="card"
+            style={`--top:${theme.top}; --bottom:${theme.bottom}; --accent:${theme.accent};`}
+          >
+            <div class="art">
+              <div class="badge">
+                {theme.icon === 'search' && (
+                  <svg viewBox="0 0 40 40" width="28" height="28">
+                    <circle cx="16" cy="16" r="11" fill="none" stroke="currentColor" stroke-width="4" />
+                    <line x1="24" y1="24" x2="34" y2="34" stroke="currentColor" stroke-width="5" stroke-linecap="round" />
+                  </svg>
+                )}
+                {theme.icon === 'people' && (
+                  <svg viewBox="0 0 40 40" width="30" height="30">
+                    <circle cx="20" cy="13" r="7" fill="currentColor" />
+                    <path d="M6 34c0-8 8-12 14-12s14 4 14 12" fill="currentColor" opacity="0.85" />
+                  </svg>
+                )}
+                {theme.icon === 'book' && (
+                  <svg viewBox="0 0 40 40" width="30" height="30">
+                    <path d="M20 12 L6 16 L6 30 L20 26 Z" fill="currentColor" />
+                    <path d="M20 12 L34 16 L34 30 L20 26 Z" fill="currentColor" />
+                    <line x1="20" y1="12" x2="20" y2="26" stroke="#fff" stroke-width="1.5" />
+                  </svg>
+                )}
+              </div>
+              <span class="pill">{article.date}</span>
+              <span class="rule"></span>
+              <h2 class="title">{article.title}</h2>
+              <p class="summary">{article.summary}</p>
+            </div>
+          </article>
+        );
+      })}
     </div>
   </section>
 </Layout>
 
 <style>
+  h1 {
+    font-size: 2rem;
+    font-weight: 700;
+  }
   .news {
     max-width: var(--content-width);
     margin: 0 auto;
@@ -34,12 +88,100 @@ const newsArticles = [
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    margin: 1em 0;
+    gap: 2.7rem;
   }
 
-  article {
-    border: 1px solid var(--color-border);
-    padding: 0.8rem;
+  .card {
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+  }
+
+  .art {
+    position: relative;
+    aspect-ratio: 1200 / 630;
+    padding: 1.5rem;
+    color: #fff;
+    background:
+      linear-gradient(to bottom, transparent 55%, rgba(0, 0, 0, 0.55) 100%),
+      repeating-linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.05) 0 10px,
+        transparent 10px 20px
+      ),
+      linear-gradient(to bottom, var(--top), var(--bottom));
+  }
+
+  .badge {
+    position: absolute;
+    top: 1.25rem;
+    left: 1.25rem;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .badge :global(svg) {
+    width: 1.3rem;
+    height: 1.3rem;
+  }
+
+  .pill {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.25rem;
+    background: #fff;
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 0.02em;
+    padding: 0.4rem 0.85rem;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  .rule {
+    position: absolute;
+    bottom: 7.6rem;
+    left: 1.5rem;
+    width: 2.25rem;
+    height: 0.2rem;
+    background: var(--accent);
+    border-radius: 999px;
+  }
+
+  .title {
+    position: absolute;
+    left: 1.5rem;
+    right: 1.5rem;
+    bottom: 4.9rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .summary {
+    position: absolute;
+    left: 1.5rem;
+    right: 1.5rem;
+    bottom: 2.7rem;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 </style>
