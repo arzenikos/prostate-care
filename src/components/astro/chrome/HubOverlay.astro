@@ -32,7 +32,7 @@ import { overlays } from '@contents/ui/site';
             <form class="hub-form" action="/newsletters" method="get">
               <label class="sr-only" for="newsletter-email">Email address</label>
               <input id="newsletter-email" name="email" type="email" placeholder="email@example.com" required />
-              <button type="submit" aria-label="Subscribe">
+              <button class="flex items-center justify-center" type="submit" aria-label="Subscribe">
                 <LineIcon name="send" />
               </button>
             </form>
@@ -216,15 +216,18 @@ import { overlays } from '@contents/ui/site';
 
   .hub-form {
     display: flex;
-    max-width: 28rem;
-    background: #fff;
+    max-width: 60rem;
+    /* height: 6rem; */
+    background: #b2adad;
+    margin: 1.8em 0 1em;
   }
 
   .hub-form input {
     flex: 1;
     border: 0;
     padding: 0.85rem 1rem;
-    font-size: 1rem;
+    font-size: 1.8rem;
+    color: #0c003c;
   }
 
   .hub-form button {
@@ -241,7 +244,7 @@ import { overlays } from '@contents/ui/site';
     justify-content: right;
     text-align: right;
     gap: 0.5rem;
-    margin: 5rem 0;
+    margin: 3rem 0;
     color: #fff;
     text-decoration: none;
     font-size: 1.5rem;
