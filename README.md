@@ -1,9 +1,9 @@
-<img width="100" height="100" alt="unnamed (7 1)" src="https://github.com/user-attachments/assets/48113539-8454-4047-80ad-e0ea604adbff" />
+<div align="center">
+   <img width="100" height="100" alt="unnamed (7 1)" src="https://github.com/user-attachments/assets/48113539-8454-4047-80ad-e0ea604adbff" />
 
-<img width="100" height="100" alt="unnamed (13)" src="https://github.com/user-attachments/assets/53114be2-7b6d-47f0-92a7-af3985a028d0" />
 
 <h1>
-   Prostate Care | Aotearoa
+   Prometheus | Prostate Care Aotearoa Website
 </h1>
 
 ![Astro](https://img.shields.io/badge/AstroJS-%232C2052.svg?style=for-the-badge&logo=astro&logoColor=white)
@@ -15,10 +15,12 @@
 
 > BCDE311 - Software Development Project
 >
-> A user-focused website remake for Prostate Cancer NZ, as part of the **BCDE311 - Software Development Project** course. `Prostate Care | Aotearoa`, formerly BlueprintNZ, is an informational and resource platform designed to support individuals affected by prostate cancer in New Zealand. The site aims to provide reliable guidance, raise awareness, and connect users with helpful resources and support networks.
+> `Prometheus` is a user-focused website remake for Prostate Cancer NZ, as part of the **BCDE311 - Software Development Project** course. `Prometheus`, formerly BlueprintNZ, is an informational and resource platform designed to support individuals affected by prostate cancer in New Zealand. The site aims to provide reliable guidance, raise awareness, and connect users with helpful resources and support networks.
 This project demonstrates full-stack development using modern web technologies, accessibility best practices, and responsive design principles.
 
-[![Live Demo](https://img.shields.io/badge/Netlify-Live%20Demo%20-181717?style=for-the-badge&logo=netlify&labelColor=080182)](https://prostatecarenz.netlify.app/)
+[![Live Demo](https://img.shields.io/badge/Netlify-Live%20Demo%20-181717?style=for-the-badge&logo=netlify&labelColor=112927)](https://prostatecarenz.netlify.app/)
+[![Figma Prototype](https://img.shields.io/badge/Figma-Prototype-181717?style=for-the-badge&logo=figma&labelColor=191b36)](https://www.figma.com/design/fCs420IxnIJFJ5a36LEQdp/DesignThinkingProjects--Copy-?node-id=2012-192&t=OKl2kRrYhCOtsRTu-1)
+</div>
 
 
 ## Branch Note
@@ -29,31 +31,59 @@ This project demonstrates full-stack development using modern web technologies, 
 
 > [ ⎇ See Branch Info for more information](https://github.com/arzenikos/prostate-care/wiki) 
 ---
-
-
 <table>
-  <tr>
-      <td><img width="433" height="287" alt="image" src="https://github.com/user-attachments/assets/e8c011aa-665a-4254-86a3-333c022a1d8f" /></td>
-      <td><img width="433" height="287" alt="image" src="https://github.com/user-attachments/assets/e8c011aa-665a-4254-86a3-333c022a1d8f" /></td>
-      <td><img width="433" height="287" alt="image" src="https://github.com/user-attachments/assets/e8c011aa-665a-4254-86a3-333c022a1d8f" /></td>
+  <tr align="center">
+    <td colspan="3"><img src="" alt="Image 1A" /></td>
+    <td colspan="3"><img src="" alt="Image 1B" /></td>
   </tr>
-  <tr>
-      <td>
-          <ul>
-              <li>Sample UI description</li>
-          </ul>
-      </td>
-      <td>
-          <ul>
-              <li>Sample UI description</li>
-          </ul>
-      </td>
-      <td>
-          <ul>
-              <li>Sample UI description</li>
-          </ul>
-      </td>
-    </tr>
+  <tr align="center">
+    <td colspan="3">Splashscreen</td>
+    <td colspan="3">Landing Page</td>
+  </tr>
+
+  <tr align="center" colspan="6">
+    <td colspan="2"><img src="" alt="Image 2A" /></td>
+    <td colspan="2"><img src="" alt="Image 2B" /></td>
+    <td colspan="2"><img src="" alt="Image 2C" /></td>
+  </tr>
+  <tr align="center">
+    <td colspan="2">Family Support Page</td>
+    <td colspan="2">Research Hub Page</td>
+    <td colspan="2">Patient Space Page</td>
+  </tr>
+
+  <tr align="center">
+    <td><img src="" alt="Image 3A" /></td>
+    <td><img src="" alt="Image 3B" /></td>
+    <td><img src="" alt="Image 3C" /></td>
+    <td><img src="" alt="Image 3D" /></td>
+    <td><img src="" alt="Image 3E" /></td>
+    <td><img src="" alt="Image 3F" /></td>
+  </tr>
+  <tr align="center">
+    <td>BlueNode Banner</td>
+    <td>BlueNode Page</td>
+    <td>Newsletter Banner</td>
+    <td>Newsletter Page</td>
+    <td>Community & Support Banner</td>
+    <td>Community & Support Page</td>
+  </tr>
+
+  <tr align="center">
+    <td colspan="6"><img src="" alt="Image 4" /></td>
+  </tr>
+  <tr align="center">
+    <td colspan="6">BlueNode Feature</td>
+  </tr>
+
+  <!-- Row 5: 1 column spanning all 6 -->
+  <tr align="center">
+    <td colspan="6"><img src="" alt="Image 5" /></td>
+  </tr>
+  <tr align="center">
+    <td colspan="6">Chatbot Feature</td>
+  </tr>
+
 </table>
 
 > [See Wiki](https://github.com/arzenikos/shift-sync-agentic/wiki/Development-Iterations) for the iteration snapshots, full admin usage instructions, and data model details.
