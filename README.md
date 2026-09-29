@@ -22,73 +22,92 @@ This project demonstrates full-stack development using modern web technologies, 
 [![Figma Prototype](https://img.shields.io/badge/Figma-Prototype-181717?style=for-the-badge&logo=figma&labelColor=191b36)](https://www.figma.com/design/fCs420IxnIJFJ5a36LEQdp/DesignThinkingProjects--Copy-?node-id=2012-192&t=OKl2kRrYhCOtsRTu-1)
 </div>
 
-
 ## Branch Note
 - **Branch**: `chore/fix-ai-retrieval`  
 - **Purpose**: Maintenance and retrieval‑logic fixes.
 - **Key Points**:
    - Non‑feature work; improves AI data flow and reliability.
 
-> [ ⎇ See Branch Info for more information](https://github.com/arzenikos/prostate-care/wiki) 
+> `⎇` See [ Branch Info](https://github.com/arzenikos/prostate-care/wiki) for more information
 ---
-<table>
-  <tr align="center">
-    <td colspan="3"><img src="" alt="Image 1A" /></td>
-    <td colspan="3"><img src="" alt="Image 1B" /></td>
-  </tr>
-  <tr align="center">
-    <td colspan="3">Splashscreen</td>
-    <td colspan="3">Landing Page</td>
-  </tr>
 
-  <tr align="center" colspan="6">
-    <td colspan="2"><img src="" alt="Image 2A" /></td>
-    <td colspan="2"><img src="" alt="Image 2B" /></td>
-    <td colspan="2"><img src="" alt="Image 2C" /></td>
-  </tr>
-  <tr align="center">
-    <td colspan="2">Family Support Page</td>
-    <td colspan="2">Research Hub Page</td>
-    <td colspan="2">Patient Space Page</td>
-  </tr>
-
-  <tr align="center">
-    <td><img src="" alt="Image 3A" /></td>
-    <td><img src="" alt="Image 3B" /></td>
-    <td><img src="" alt="Image 3C" /></td>
-    <td><img src="" alt="Image 3D" /></td>
-    <td><img src="" alt="Image 3E" /></td>
-    <td><img src="" alt="Image 3F" /></td>
-  </tr>
-  <tr align="center">
-    <td>BlueNode Banner</td>
-    <td>BlueNode Page</td>
-    <td>Newsletter Banner</td>
-    <td>Newsletter Page</td>
-    <td>Community & Support Banner</td>
-    <td>Community & Support Page</td>
-  </tr>
-
-  <tr align="center">
-    <td colspan="6"><img src="" alt="Image 4" /></td>
-  </tr>
-  <tr align="center">
-    <td colspan="6">BlueNode Feature</td>
-  </tr>
-
-  <!-- Row 5: 1 column spanning all 6 -->
-  <tr align="center">
-    <td colspan="6"><img src="" alt="Image 5" /></td>
-  </tr>
-  <tr align="center">
-    <td colspan="6">Chatbot Feature</td>
-  </tr>
-
-</table>
+<details open>
+   <summary><h2>Snapshots</h6></summary>
+   <table>
+     <tr align="center">
+       <td colspan="3">
+          <img width="948" height="469" alt="01-splashscreen" src="https://github.com/user-attachments/assets/6eabcf5b-e401-4f93-a1b6-5eb9db1daee8" />
+       </td>
+       <td colspan="3">
+          <img width="960" height="478" alt="02-homepage" src="https://github.com/user-attachments/assets/5473a4f6-7341-4860-ba64-fea94349c1c1" />
+       </td>
+        </tr>
+     <tr align="center" colspan="3">
+       <td colspan="3">Splashscreen</td>
+       <td colspan="3">Landing Page</td>
+     </tr>
+     <tr align="center">
+       <td colspan="2">
+          <img width="960" height="478" alt="03-family-support" src="https://github.com/user-attachments/assets/e121b727-9488-410e-9bfb-c577fe545518" />
+      </td>
+       <td colspan="2">
+          <img width="960" height="478" alt="04-research-hub" src="https://github.com/user-attachments/assets/d30967c0-6cc7-47a7-a5c0-75af2e66c52e" />
+      </td>
+       <td colspan="2">
+          <img width="960" height="480" alt="06-patient-space" src="https://github.com/user-attachments/assets/308d55e1-7b58-42b5-b2b8-cebeee4e48ba" />
+      </td>
+     </tr>
+     <tr align="center">
+       <td colspan="2">Family Support Page</td>
+       <td colspan="2">Research Hub Page</td>
+       <td colspan="2">Patient Space Page</td>
+     </tr>
+     <tr align="center">
+       <td>
+          <img width="960" height="480" alt="banner-blue-node" src="https://github.com/user-attachments/assets/96b7aa1b-4a03-4294-b9d7-8971ae95d09a" />
+      </td>
+       <td>
+          <img width="960" height="479" alt="hub-bluenode" src="https://github.com/user-attachments/assets/7d33b5a4-a368-4437-bc89-4e5c45922b06" />
+      </td>
+       <td>
+          <img width="960" height="480" alt="banner-newsletter" src="https://github.com/user-attachments/assets/88f2ed68-212c-43e6-85b8-1bc46f72fbe9" />
+      </td>
+       <td>
+          <img width="960" height="479" alt="hub-news-letters" src="https://github.com/user-attachments/assets/73f0d7d7-cdd2-48f5-a916-3f412b8ba251" />
+      </td>
+       <td>
+          <img width="960" height="480" alt="banner-community-and-support" src="https://github.com/user-attachments/assets/ac83adee-08d4-42fe-bfb4-47163663043f" />
+      </td>
+       <td>
+          <img width="960" height="480" alt="community-and-support" src="https://github.com/user-attachments/assets/b4877899-6f31-4227-9f55-bed5e83f48fe" />
+      </td>
+     </tr>
+     <tr align="center">
+       <td>BlueNode Banner</td>
+       <td>BlueNode Page</td>
+       <td>Newsletter Banner</td>
+       <td>Newsletter Page</td>
+       <td>Community & Support Banner</td>
+       <td>Community & Support Page</td>
+     </tr>
+     <tr align="center">
+       <td colspan="3">
+          <img width="480" height="235" alt="bluenode-video" src="https://github.com/user-attachments/assets/a066e6d3-7079-489b-99ec-5bcaf2acacee" />
+      </td>
+      <td colspan="3">
+          <img width="480" height="263" alt="chatbot-response-video" src="https://github.com/user-attachments/assets/391cb445-9afa-4646-9aa8-4fe80aafeb4d" />
+      </td>
+     </tr>
+     <tr align="center">
+       <td colspan="3">BlueNode Feature</td>
+       <td colspan="3">Chatbot Feature</td>
+     </tr>
+   </table>
+</details>
 
 > [See Wiki](https://github.com/arzenikos/shift-sync-agentic/wiki/Development-Iterations) for the iteration snapshots, full admin usage instructions, and data model details.
 
-
+---
 
 ## High-Level Features
 - Informational Pages: Clear, structured content on prostate cancer awareness, symptoms, treatment options, and support services.
