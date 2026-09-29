@@ -20,16 +20,47 @@ This project demonstrates full-stack development using modern web technologies, 
 
 [![Live Demo](https://img.shields.io/badge/Netlify-Live%20Demo%20-181717?style=for-the-badge&logo=netlify&labelColor=080182)](https://prostatecarenz.netlify.app/)
 
----
-## Wiki [→](https://github.com/arzenikos/prostate-care/wiki)
-- **[Iterations](https://github.com/arzenikos/prostate-care/wiki/Development-Iterations)**
-- **[Figma Prototype](https://www.figma.com/design/fCs420IxnIJFJ5a36LEQdp/DesignThinkingProjects--Copy-?node-id=2012-192&t=OKl2kRrYhCOtsRTu-1)**
-- **[PDF Wireframe Diagram](https://github.com/arzenikos/prostate-care/tree/docs/assets/diagrams/pamana-diagram.pdf)**
-- **[Emerge Poster](https://github.com/arzenikos/prostate-care/tree/docs/assets/documents/emerge-poster.pdf)**
-- **[Short Paper](https://github.com/arzenikos/prostate-care/tree/docs/assets/documents/citrenz-short-paper.pdf)**
 
+## Branch Note
+- **Branch**: `chore/fix-ai-retrieval`  
+- **Purpose**: Maintenance and retrieval‑logic fixes.
+- **Key Points**:
+   - Non‑feature work; improves AI data flow and reliability.
+
+> [ ⎇ See Branch Info for more information](https://github.com/arzenikos/prostate-care/wiki) 
 ---
-## Features
+
+
+<table>
+  <tr>
+      <td><img width="433" height="287" alt="image" src="https://github.com/user-attachments/assets/e8c011aa-665a-4254-86a3-333c022a1d8f" /></td>
+      <td><img width="433" height="287" alt="image" src="https://github.com/user-attachments/assets/e8c011aa-665a-4254-86a3-333c022a1d8f" /></td>
+      <td><img width="433" height="287" alt="image" src="https://github.com/user-attachments/assets/e8c011aa-665a-4254-86a3-333c022a1d8f" /></td>
+  </tr>
+  <tr>
+      <td>
+          <ul>
+              <li>Sample UI description</li>
+          </ul>
+      </td>
+      <td>
+          <ul>
+              <li>Sample UI description</li>
+          </ul>
+      </td>
+      <td>
+          <ul>
+              <li>Sample UI description</li>
+          </ul>
+      </td>
+    </tr>
+</table>
+
+> [See Wiki](https://github.com/arzenikos/shift-sync-agentic/wiki/Development-Iterations) for the iteration snapshots, full admin usage instructions, and data model details.
+
+
+
+## High-Level Features
 - Informational Pages: Clear, structured content on prostate cancer awareness, symptoms, treatment options, and support services.
 - Responsive Design: Optimized for mobile, tablet, and desktop screens.
 - Fast & Lightweight: Built with Astro for minimal client-side JavaScript and high performance.
@@ -102,7 +133,7 @@ npx linkinator http://localhost:4321 --recurse
 
 ```bash
 # Switching from branch with submodule to another branch 
-git checkout --recurse-submodules other-branch
+git checkout --recurse-submodules <other-branch>
 ```
 
 ```bash
@@ -120,6 +151,8 @@ git checkout <branch-with-submodule>
 git submodule update --init --recursive
 ```
 
+---
+
 > [!WARNING]
 > ## Important Notice: Academic Integrity
 >
@@ -131,3 +164,16 @@ git submodule update --init --recursive
 > ## **Disclaimer**
 >
 > All the content presented here is the result of my own individual work, and any resemblance to other works is purely coincidental. If you are a student, please refrain from using or copying this work in any way that violates the principles of academic honesty and integrity.
+
+
+## Project Documentation
+- **[Iterations](https://github.com/arzenikos/prostate-care/wiki/Development-Iterations)**
+- **[Figma Prototype](https://www.figma.com/design/fCs420IxnIJFJ5a36LEQdp/DesignThinkingProjects--Copy-?node-id=2012-192&t=OKl2kRrYhCOtsRTu-1)**
+- **[UML Diagram](https://github.com/arzenikos/prostate-care/tree/docs/assets/diagrams/uml-diagram.pdf)**
+- **[Emerge Poster](https://github.com/arzenikos/prostate-care/tree/docs/assets/documents/emerge-poster.pdf)**
+- **[Short Paper](https://github.com/arzenikos/prostate-care/tree/docs/assets/documents/citrenz-short-paper.pdf)**
+
+
+---
+
+Created by Arsenie — 2025
