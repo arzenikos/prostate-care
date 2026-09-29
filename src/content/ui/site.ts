@@ -88,8 +88,8 @@ export const hubs = {
     heading: 'Research & Student Hub',
     intro:
       'Explore peer-reviewed clinical trial data, pharmacokinetic analyses, and epidemiological statistics shaping modern prostate oncology.',
-    cta: 'View NZ and global data',
-    ctaHref: '/prostate-cancer-statistics',
+    cta: 'Explore PCOR‑ANZ Statistics',
+    ctaHref: 'https://prostatecancerregistry.org/',
     illustration: 'path-cards/path-researcher-hub',
   },
 };

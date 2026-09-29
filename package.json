@@ -1,11 +1,10 @@
 {
-  "name": "astro-netlify-platform-starter",
+  "name": "prostate-cancer-astro",
   "type": "module",
-  "version": "0.3.0",
+  "version": "0.5.1",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "postinstall": "git submodule update --init --recursive",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
@@ -16,7 +15,8 @@
     "search": "tsx --env-file=.env src/scripts/search.ts",
     "eval": "tsx --env-file=.env src/scripts/eval.ts",
     "close": "rm -rf node_modules && rm -rf package-lock.json",
-    "test:links": "start-server-and-test dev http://localhost:4321 \"linkinator http://localhost:4321 --recurse\""
+    "test:links": "start-server-and-test dev http://localhost:4321 \"linkinator http://localhost:4321 --recurse\"",
+    "publish": "git add . && git commit -m 'Update' && git push"
   },
   "dependencies": {
     "@astrojs/node": "^11.1.5",

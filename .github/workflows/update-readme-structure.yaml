@@ -1,0 +1,62 @@
+name: Update README Structure
+
+on:
+  push:
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
+      - 'assets/**'
+    branches:
+      - dev
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install tree
+        run: sudo apt-get install tree
+
+      - name: Generate structure
+        run: |
+          tree -I '.git|node_modules|__pycache__' -L 2 > structure.txt
+
+      - name: Update README
+        run: |
+          {
+            echo '```text'
+            cat structure.txt
+            echo '```'
+          } > structure-md.txt
+          
+          awk '
+          /<!-- START_STRUCTURE -->/ {
+            print;
+            system("cat structure-md.txt");
+            skip=1;
+            next
+          }
+          /<!-- END_STRUCTURE -->/ {
+            skip=0
+          }
+          !skip
+          ' README.md > README.new.md
+
+          mv README.new.md README.md
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+          git add README.md
+
+          git diff --cached --quiet || git commit -m "Auto-update README structure"
+
+          git push

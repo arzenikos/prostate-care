@@ -1,0 +1,5 @@
+   [build]
+     command = "corepack enable && pnpm install && pnpm run build"
+    
+   [build.environment]
+     NPM_FLAGS = "--version" # prevents Netlify's default npm ci step from running

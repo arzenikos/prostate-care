@@ -34,6 +34,14 @@ This project demonstrates full-stack development using modern web technologies, 
 <details open>
    <summary><h2>Snapshots</h6></summary>
    <table>
+      <tr>
+      <td colspan="3" align="center">
+         <img src="https://img.shields.io/badge/ffffff-ffffff?style=for-the-badge&logoColor=black" />
+         <img src="https://img.shields.io/badge/00007e-00007e?style=for-the-badge&logoColor=black" />
+         <img src="https://img.shields.io/badge/fef6e9-fef6e9?style=for-the-badge&logoColor=white" />
+         <img src="https://img.shields.io/badge/59a0eb-59a0eb?style=for-the-badge&logoColor=white" />
+      </td>
+   </tr>   
      <tr align="center">
        <td colspan="3">
           <img width="948" height="469" alt="01-splashscreen" src="https://github.com/user-attachments/assets/6eabcf5b-e401-4f93-a1b6-5eb9db1daee8" />
@@ -215,6 +223,10 @@ git checkout --recurse-submodules <other-branch>
 ```bash
 # Deinit the submodule's working directory without deleting its config
 git submodule deinit -f public/assets
+
+# Remove the folder from Git’s index (but keep the files locally)
+git rm -r --cached public/assets
+
 
 rm -r .\node_modules\
 rm -r .\package-lock.json
