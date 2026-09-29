@@ -131,6 +131,8 @@ This project demonstrates full-stack development using modern web technologies, 
 .
 ├── README.md
 ├── astro.config.mjs
+├── db
+│   └── init
 ├── docker-compose.yaml
 ├── image.png
 ├── netlify.toml
@@ -156,7 +158,7 @@ This project demonstrates full-stack development using modern web technologies, 
 ├── structure.txt
 └── tsconfig.json
 
-14 directories, 13 files
+16 directories, 13 files
 ```
 <!-- END_STRUCTURE -->
 
