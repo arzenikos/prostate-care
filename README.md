@@ -35,13 +35,14 @@ This project demonstrates full-stack development using modern web technologies, 
    <summary><h2>Snapshots</h6></summary>
    <table>
       <tr>
-      <td colspan="3" align="center">
-         <img src="https://img.shields.io/badge/ffffff-ffffff?style=for-the-badge&logoColor=black" />
-         <img src="https://img.shields.io/badge/00007e-00007e?style=for-the-badge&logoColor=black" />
-         <img src="https://img.shields.io/badge/fef6e9-fef6e9?style=for-the-badge&logoColor=white" />
-         <img src="https://img.shields.io/badge/59a0eb-59a0eb?style=for-the-badge&logoColor=white" />
-      </td>
-   </tr>   
+         <td colspan="6" align="center">
+            <img src="https://img.shields.io/badge/ffffff-ffffff?style=for-the-badge&logoColor=black" /> 
+            <img src="https://img.shields.io/badge/fef6e9-fef6e9?style=for-the-badge&logoColor=white" />
+            <img src="https://img.shields.io/badge/000000-000000?style=for-the-badge&logoColor=black" /> 
+            <img src="https://img.shields.io/badge/00007e-00007e?style=for-the-badge&logoColor=black" />
+            <img src="https://img.shields.io/badge/59a0eb-59a0eb?style=for-the-badge&logoColor=white" />
+         </td>
+      </tr>   
      <tr align="center">
        <td colspan="3">
           <img width="948" height="469" alt="01-splashscreen" src="https://github.com/user-attachments/assets/6eabcf5b-e401-4f93-a1b6-5eb9db1daee8" />
@@ -160,20 +161,22 @@ This project demonstrates full-stack development using modern web technologies, 
 
 ## Installation
 
-### 1. Clone the repository
+### Part 1 Resource Retrieval
+
+#### 1. Clone the repository
 
 ```bash
 git clone https://github.com/arzenikos/prostate-care.git
 ```
 
-### 2. Install dependencies
+#### 2. Install dependencies
 
 ```bash
 cd prostate-care
 npm install
 ```
 
-### 3. Clone fresh assets from private repo `prostate-care-assets` to `public/assets`
+#### 3. Clone fresh assets from private repo `prostate-care-assets` to `public/assets`
 
 ```bash
 # Adding submodule
@@ -184,11 +187,50 @@ git submodule add --force https://github.com/arzenikos/prostate-care-assets.git 
 git config --global submodule.recurse true
 ```
 
-### 4. Start local development server
+### Part 2 Environment Setup
+
+#### 4. Setup Docker containers
+
+```bash
+# Start docker
+docker desktop start
+
+# Setup all the images & containers in the docker-compose.yaml file: Ollama, pgai vectorizer, & pgvector_db_container.
+docker compose up -d
+```
+
+#### 5. Database setup
+
+> [!important] Check `.env` file exist. Otherwse, copy `.env.example`
+
+```bash
+cp .env.example .env
+```
+
+Enter the PostgreSQL interface
+```bash
+
+docker exec -it pgvector_db_container psql -U $POSTGRES_USER -d $POSTGRES_DB -h localhost   
+```
+
+See `./db/init/` SQL files for the steps to create the vector database, schema, and tables
+
+
+#### 6a. To enable chatbot RAG
+```
+# Start ingesting documents from ./public/assets/website-knowledge submodule
+npm run ingest
+
+# Build
+npm run build
+```
+
+#### 6b. Start local development server
 
 ```bash
 npm run dev
 ```
+
 
 ---
 
