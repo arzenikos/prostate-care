@@ -100,7 +100,34 @@ This project demonstrates full-stack development using modern web technologies, 
 ## Project Structure
 <!-- START_STRUCTURE -->
 ```text
+.
+├── README.md
+├── astro.config.mjs
+├── db
+│   └── migrations
+├── docker-compose.yaml
+├── image.png
+├── package.json
+├── public
+│   └── assets
+├── scripts
+│   └── embed.mjs
+├── src
+│   ├── components
+│   ├── consts.ts
+│   ├── content
+│   ├── content.config.ts
+│   ├── data
+│   ├── layouts
+│   ├── lib
+│   ├── pages
+│   ├── scripts
+│   ├── styles
+│   └── utils
+├── structure.txt
+└── tsconfig.json
 
+16 directories, 10 files
 ```
 <!-- END_STRUCTURE -->
 
