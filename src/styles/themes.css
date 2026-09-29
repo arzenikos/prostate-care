@@ -1,0 +1,50 @@
+:root {
+  --color-palette-one: #b9d6f2;
+  --color-palette-two: #9fc6ed;
+  --color-palette-three: #3583f6;
+  --color-palette-four: #082756;
+  --color-palette-five: #00007e;
+
+  /* Neutral */
+  --color-palette-zero: #fbfdff;
+  --color-palette-border: #0508ba;
+
+  --color-palette-gray: #565d64;
+  --color-palette-ghost: #849cb7b1;
+  --color-palette-light-gray: #37393b;
+  --color-palette-accent: #3a0d02;
+  --color-palette-accent-reverse: #eec4b9;
+  /* --color-palette-accent: #3a0d02; */
+
+
+  --gradient-from-light: #b9d6f2;
+  --gradient-to-light: #b9d6f2;
+
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
+
+  --color-sun: #f58b0a;
+  --color-moon: #3a0d02;
+}
+
+.dark {
+  --color-palette-one: #020255;
+  --color-palette-two: #083852;
+  --color-palette-three: #0b004b;
+  --color-palette-four: #80A4B7;
+  --color-palette-five: #B8D9EB;
+
+  --gradient-from-light: #13232A;
+  --gradient-to-light: #13232A;
+  --color-palette-accent: #eec4b9;
+  --color-palette-accent-reverse: #3a0d02;
+
+  /* --color-palette-accent: #eec4b9; */
+
+  --color-palette-border: #acfbe1;
+  --color-palette-light-gray: #97a2ac;
+  --color-palette-ghost: #565d64;
+
+}

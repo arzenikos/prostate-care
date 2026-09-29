@@ -1,0 +1,563 @@
+---
+interface CanvasNode {
+  id: string;
+  title: string;
+  excerpt: string;
+  url: string;
+  x: number;
+  y: number;
+  type: 'core' | 'content' | 'utility';
+}
+
+interface Props {
+  nodes: CanvasNode[];
+  edges: [string, string][];
+  currentPath?: string;
+  height?: string; // CSS height, defaults to 100vh
+}
+
+const { nodes, edges, currentPath = '', height = '100vh' } = Astro.props;
+
+// Mark whichever node matches the current route.
+const nodesWithHere = nodes.map((n) => ({
+  ...n,
+  here: currentPath === n.url,
+}));
+
+// Flat list for the mobile fallback, grouped by type for a bit of structure.
+const mobileGroups: Record<string, typeof nodesWithHere> = { core: [], content: [], utility: [] };
+nodesWithHere.forEach((n) => mobileGroups[n.type]?.push(n));
+---
+
+<div class="canvas-nav-root" style={`height: ${height};`}>
+  <!-- Desktop / tablet: interactive canvas -->
+  <div class="desktop-canvas">
+    <div id="legend">
+      <div class="row"><span class="dot core"></span> core page</div>
+      <div class="row"><span class="dot content"></span> content page</div>
+      <div class="row"><span class="dot utility"></span> utility page</div>
+      <div class="hint">drag background to pan · scroll to zoom · left-click to open · right-click to expand/collapse</div>
+    </div>
+
+    <div id="canvas-wrap">
+      <div id="canvas-inner">
+        <svg id="edges"></svg>
+        {
+          nodesWithHere.map((n) => (
+            <div
+              class={`node ${n.type}${n.here ? ' here' : ''}`}
+              id={`node-${n.id}`}
+              data-id={n.id}
+              data-url={n.url}
+              style={`left:${n.x}px; top:${n.y}px;`}
+            >
+              <div class="eyebrow">{n.type}</div>
+              <h3>{n.title}</h3>
+              <p>{n.excerpt}</p>
+              <span class="child-badge" style="display:none;"></span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <div id="controls">
+      <button id="zoom-out" type="button" aria-label="Zoom out">−</button>
+      <span id="zoom-label">100%</span>
+      <button id="zoom-in" type="button" aria-label="Zoom in">+</button>
+      <button id="zoom-reset" type="button" aria-label="Reset view">⟲</button>
+    </div>
+  </div>
+
+  <!-- Mobile: plain link list, canvas is disabled entirely -->
+  <nav class="mobile-fallback" aria-label="Site pages">
+    {
+      Object.entries(mobileGroups).map(([type, group]) =>
+        group.length > 0 && (
+          <div class="mobile-group">
+            <div class="mobile-group-label">{type}</div>
+            {group.map((n) => (
+              <a class={`mobile-link${n.here ? ' here' : ''}`} href={n.url}>
+                <span class="mobile-link-title">{n.title}</span>
+                <span class="mobile-link-excerpt">{n.excerpt}</span>
+              </a>
+            ))}
+          </div>
+        )
+      )
+    }
+  </nav>
+</div>
+
+<script define:vars={{ nodes: nodesWithHere, edges }}>
+  const root = document.currentScript.previousElementSibling.classList.contains('canvas-nav-root')
+    ? document.currentScript.previousElementSibling
+    : document.querySelector('.canvas-nav-root');
+
+  const wrap = root.querySelector('#canvas-wrap');
+  const inner = root.querySelector('#canvas-inner');
+  const svg = root.querySelector('#edges');
+  const zoomLabel = root.querySelector('#zoom-label');
+
+  // live positions, since nodes can be dragged
+  const state = nodes.map((n) => ({ ...n }));
+
+  // --- hierarchy for collapse/expand, derived from directed edges [parent, child] ---
+  const childrenOf = {};   // parentId -> [childId, ...]
+  const parentOf = {};     // childId -> parentId (first-seen wins)
+  edges.forEach(([a, b]) => {
+    (childrenOf[a] = childrenOf[a] || []).push(b);
+    if (!(b in parentOf)) parentOf[b] = a;
+  });
+  const collapsed = new Set(); // ids currently collapsed
+
+  function isVisible(id) {
+    let cur = parentOf[id];
+    while (cur) {
+      if (collapsed.has(cur)) return false;
+      cur = parentOf[cur];
+    }
+    return true;
+  }
+
+  function updateBadges() {
+    state.forEach((n) => {
+      const el = root.querySelector(`#node-${n.id}`);
+      if (!el) return;
+      const kids = childrenOf[n.id];
+      const badge = el.querySelector('.child-badge');
+      if (kids && kids.length > 0) {
+        badge.style.display = 'inline-flex';
+        badge.textContent = (collapsed.has(n.id) ? '▸ ' : '▾ ') + kids.length;
+      } else {
+        badge.style.display = 'none';
+      }
+    });
+  }
+
+  function updateVisibility() {
+    state.forEach((n) => {
+      const el = root.querySelector(`#node-${n.id}`);
+      if (!el) return;
+      el.style.display = isVisible(n.id) ? '' : 'none';
+    });
+    updateBadges();
+    renderEdges();
+  }
+
+  let scale = 1, tx = 0, ty = 0;
+  let panning = false, panStart = { x: 0, y: 0 }, startTx = 0, startTy = 0;
+  let draggingNode = null, dragOffset = {};
+
+  function applyTransform() {
+    inner.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+    zoomLabel.textContent = Math.round(scale * 100) + '%';
+  }
+
+  function nodeCenter(n) {
+    const el = root.querySelector(`#node-${n.id}`);
+    const w = el ? el.offsetWidth : 210;
+    const h = el ? el.offsetHeight : 70;
+    return { x: n.x + w / 2, y: n.y + h / 2 };
+  }
+
+  function renderEdges() {
+    svg.innerHTML = '';
+    edges.forEach(([a, b]) => {
+      if (!isVisible(a) || !isVisible(b)) return;
+      const na = state.find((n) => n.id === a);
+      const nb = state.find((n) => n.id === b);
+      if (!na || !nb) return;
+      const pa = nodeCenter(na), pb = nodeCenter(nb);
+      const midX = (pa.x + pb.x) / 2;
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('class', 'edge');
+      path.setAttribute('data-a', a);
+      path.setAttribute('data-b', b);
+      path.setAttribute('d', `M ${pa.x} ${pa.y} C ${midX} ${pa.y}, ${midX} ${pb.y}, ${pb.x} ${pb.y}`);
+      svg.appendChild(path);
+    });
+  }
+
+  function litEdgesFor(id) {
+    root.querySelectorAll('.edge').forEach((p) => {
+      p.classList.toggle('lit', p.dataset.a === id || p.dataset.b === id);
+    });
+  }
+
+  // --- interactivity is only wired up when the canvas is actually visible (tablet/desktop) ---
+  const mq = window.matchMedia('(min-width: 768px)');
+  let canvasActive = false;
+
+  function attachInteractivity() {
+    if (canvasActive) return;
+    canvasActive = true;
+
+    inner.addEventListener('pointerover', onPointerOver);
+    inner.addEventListener('pointerout', onPointerOut);
+    wrap.addEventListener('pointerdown', onWrapPointerDown);
+    wrap.addEventListener('wheel', onWheel, { passive: false });
+    window.addEventListener('pointermove', onWindowPointerMove);
+    window.addEventListener('pointerup', onWindowPointerUp);
+
+    state.forEach((n) => {
+      const el = root.querySelector(`#node-${n.id}`);
+      if (!el) return;
+      el.addEventListener('pointerdown', onNodePointerDown(n, el));
+      el.addEventListener('click', onNodeClick(el));
+      el.addEventListener('contextmenu', onNodeContextMenu(n));
+    });
+
+    // center on the "here" node, or the first node
+    const focus = state.find((n) => n.here) || state[0];
+    if (focus) {
+      const r = wrap.getBoundingClientRect();
+      const c = nodeCenter(focus);
+      tx = r.width / 2 - c.x;
+      ty = r.height / 2 - c.y;
+    }
+    applyTransform();
+    updateVisibility();
+
+    root.querySelector('#zoom-in').addEventListener('click', zoomInHandler);
+    root.querySelector('#zoom-out').addEventListener('click', zoomOutHandler);
+    root.querySelector('#zoom-reset').addEventListener('click', zoomResetHandler);
+  }
+
+  function detachInteractivity() {
+    if (!canvasActive) return;
+    canvasActive = false;
+
+    inner.removeEventListener('pointerover', onPointerOver);
+    inner.removeEventListener('pointerout', onPointerOut);
+    wrap.removeEventListener('pointerdown', onWrapPointerDown);
+    wrap.removeEventListener('wheel', onWheel);
+    window.removeEventListener('pointermove', onWindowPointerMove);
+    window.removeEventListener('pointerup', onWindowPointerUp);
+
+    state.forEach((n) => {
+      const el = root.querySelector(`#node-${n.id}`);
+      if (!el) return;
+      const clone = el.cloneNode(true); // cheap way to strip all listeners
+      el.parentNode.replaceChild(clone, el);
+    });
+
+    root.querySelector('#zoom-in')?.removeEventListener('click', zoomInHandler);
+    root.querySelector('#zoom-out')?.removeEventListener('click', zoomOutHandler);
+    root.querySelector('#zoom-reset')?.removeEventListener('click', zoomResetHandler);
+  }
+
+  function onPointerOver(e) {
+    const node = e.target.closest('.node');
+    if (node) litEdgesFor(node.dataset.id);
+  }
+  function onPointerOut(e) {
+    const node = e.target.closest('.node');
+    if (node) root.querySelectorAll('.edge').forEach((p) => p.classList.remove('lit'));
+  }
+  function onWrapPointerDown(e) {
+    if (e.button !== 0) return; // left button only — right-click is reserved for context menu
+    if (e.target.closest('.node')) return;
+    panning = true;
+    wrap.classList.add('grabbing');
+    panStart = { x: e.clientX, y: e.clientY };
+    startTx = tx; startTy = ty;
+  }
+  function onWindowPointerMove(e) {
+    if (panning) {
+      tx = startTx + (e.clientX - panStart.x);
+      ty = startTy + (e.clientY - panStart.y);
+      applyTransform();
+    } else if (draggingNode) {
+      const dx = (e.clientX - dragOffset.startX) / scale;
+      const dy = (e.clientY - dragOffset.startY) / scale;
+      draggingNode.n.x = dragOffset.origX + dx;
+      draggingNode.n.y = dragOffset.origY + dy;
+      draggingNode.el.style.left = draggingNode.n.x + 'px';
+      draggingNode.el.style.top = draggingNode.n.y + 'px';
+      if (Math.abs(dx) > 3 || Math.abs(dy) > 3) draggingNode.el.dataset.dragged = '1';
+      renderEdges();
+    }
+  }
+  function onWindowPointerUp() {
+    panning = false;
+    wrap.classList.remove('grabbing');
+    if (draggingNode) draggingNode.el.classList.remove('dragging');
+    draggingNode = null;
+  }
+  function onNodePointerDown(n, el) {
+    return (e) => {
+      if (e.button !== 0) return; // left button only
+      e.stopPropagation();
+      draggingNode = { n, el };
+      dragOffset = { startX: e.clientX, startY: e.clientY, origX: n.x, origY: n.y };
+      el.classList.add('dragging');
+      el.dataset.dragged = '0';
+    };
+  }
+  function onNodeClick(el) {
+    return () => {
+      if (el.dataset.dragged === '1') { el.dataset.dragged = '0'; return; }
+      window.location.href = el.dataset.url;
+    };
+  }
+  function onNodeContextMenu(n) {
+    return (e) => {
+      e.preventDefault();
+      const kids = childrenOf[n.id];
+      if (!kids || kids.length === 0) return;
+      if (collapsed.has(n.id)) collapsed.delete(n.id);
+      else collapsed.add(n.id);
+      updateVisibility();
+    };
+  }
+
+  function setZoom(newScale, cx, cy) {
+    newScale = Math.min(2, Math.max(0.4, newScale));
+    const rect = wrap.getBoundingClientRect();
+    const px = (cx - rect.left - tx) / scale;
+    const py = (cy - rect.top - ty) / scale;
+    tx = cx - rect.left - px * newScale;
+    ty = cy - rect.top - py * newScale;
+    scale = newScale;
+    applyTransform();
+  }
+  function onWheel(e) {
+    e.preventDefault();
+    setZoom(scale - e.deltaY * 0.001, e.clientX, e.clientY);
+  }
+  function zoomInHandler() {
+    const r = wrap.getBoundingClientRect();
+    setZoom(scale + 0.15, r.left + r.width / 2, r.top + r.height / 2);
+  }
+  function zoomOutHandler() {
+    const r = wrap.getBoundingClientRect();
+    setZoom(scale - 0.15, r.left + r.width / 2, r.top + r.height / 2);
+  }
+  function zoomResetHandler() {
+    scale = 1; tx = 0; ty = 0; applyTransform();
+  }
+
+  function syncToViewport(e) {
+    if (e.matches) attachInteractivity();
+    else detachInteractivity();
+  }
+  syncToViewport(mq);
+  mq.addEventListener('change', syncToViewport);
+</script>
+
+<style>
+  .canvas-nav-root {
+    position: relative;
+    width: 100%;
+    --ink: var(--color-canvas-bg);
+    --card: var(--color-canvas-surface);
+    --card-border: var(--color-canvas-border);
+    --line: var(--color-canvas-line);
+    --text: var(--color-canvas-text);
+    --text-dim: var(--color-canvas-muted);
+    --violet: var(--color-canvas-accent);
+    --amber: var(--color-canvas-highlight);
+    --slate: var(--color-text-subtle);
+  }
+
+  /* --- desktop/tablet canvas (default) --- */
+  .desktop-canvas { display: block; width: 100%; height: 100%; position: relative; }
+  .mobile-fallback { display: none; }
+
+  #canvas-wrap {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    cursor: grab;
+    background-color: var(--ink);
+    background-image: radial-gradient(circle, var(--color-canvas-dot) 1px, transparent 1px);
+    background-size: 28px 28px;
+    border-radius: 12px;
+  }
+  #canvas-wrap.grabbing { cursor: grabbing; }
+
+  #canvas-inner {
+    position: absolute;
+    top: 0; left: 0;
+    width: 3000px;
+    height: 2000px;
+    transform-origin: 0 0;
+  }
+
+  svg#edges {
+    position: absolute;
+    top: 0; left: 0;
+    width: 3000px;
+    height: 2000px;
+    overflow: visible;
+    pointer-events: none;
+  }
+  .canvas-nav-root :global(.edge) {
+    fill: none;
+    stroke: var(--line);
+    stroke-width: 1.5;
+    transition: stroke 0.15s ease, stroke-width 0.15s ease;
+  }
+  .canvas-nav-root :global(.edge.lit) {
+    stroke: var(--violet);
+    stroke-width: 2;
+  }
+
+  .node {
+    position: absolute;
+    width: 210px;
+    min-height: 116px;
+    box-sizing: border-box;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    cursor: pointer;
+    user-select: none;
+    color: var(--text);
+    font-family: inherit;
+    box-shadow: var(--shadow-card);
+    transition: border-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+  }
+  .node:hover {
+    border-color: var(--violet);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px color-mix(in srgb, var(--color-navy-deep) 18%, transparent);
+  }
+  .node.dragging { cursor: grabbing; z-index: 50; transition: none; }
+  .node .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .node.core .eyebrow { color: var(--violet); }
+  .node.content .eyebrow { color: var(--amber); }
+  .node.utility .eyebrow { color: var(--slate); }
+  .node h3 { margin: 0 0 6px 0; font-size: 15px; font-weight: 600; line-height: 1.3; }
+  .node p { margin: 0; font-size: 12px; color: var(--text-dim); line-height: 1.5; }
+  .node.here {
+    border-color: var(--amber);
+    box-shadow: 0 0 0 1px var(--amber), 0 8px 22px color-mix(in srgb, var(--color-navy-deep) 18%, transparent);
+  }
+  .node.here::after {
+    content: 'you are here';
+    position: absolute;
+    top: -9px; right: 12px;
+    background: var(--amber);
+    color: var(--color-surface);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 20px;
+  }
+  .child-badge {
+    position: absolute;
+    bottom: -9px; left: 12px;
+    align-items: center;
+    background: var(--ink);
+    border: 1px solid var(--card-border);
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.02em;
+    padding: 2px 7px;
+    border-radius: 20px;
+  }
+
+  #legend {
+    position: absolute;
+    top: 16px; left: 16px;
+    z-index: 10;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+    padding: 12px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(4px);
+  }
+  #legend .row { display: flex; align-items: center; gap: 8px; }
+  #legend .dot { width: 8px; height: 8px; border-radius: 50%; }
+  #legend .dot.core { background: var(--violet); }
+  #legend .dot.content { background: var(--amber); }
+  #legend .dot.utility { background: var(--slate); }
+  #legend .hint { margin-top: 4px; color: var(--color-text-subtle); }
+
+  #controls {
+    position: absolute;
+    bottom: 16px; left: 16px;
+    z-index: 10;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  #controls button {
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    color: var(--text);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #controls button:hover { border-color: var(--violet); color: var(--violet); }
+  #zoom-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    width: 42px;
+    text-align: center;
+  }
+
+  /* --- mobile fallback: plain stacked link list, canvas fully disabled --- */
+  @media (max-width: 767px) {
+    .desktop-canvas { display: none; }
+    .mobile-fallback {
+      display: block;
+      height: 100%;
+      overflow-y: auto;
+      background: var(--ink);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .mobile-group { margin-bottom: 18px; }
+    .mobile-group-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+      padding: 0 4px;
+    }
+    .mobile-link {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .mobile-link.here { border-color: var(--amber); }
+    .mobile-link-title { font-size: 14px; font-weight: 600; }
+    .mobile-link-excerpt { font-size: 12px; color: var(--text-dim); }
+  }
+</style>

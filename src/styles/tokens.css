@@ -4,6 +4,7 @@
   --color-surface: #ffffff;
   --color-surface-muted: #f3f1ea;
   --color-navy: #00007e;
+  --color-navy-contrast: #59a0eb;
   --color-navy-deep: #001a5c;
   --color-navy-soft: #2e2e6e;
   --color-blue: #3d5aa8;
@@ -18,6 +19,15 @@
   --color-overlay-pattern: #4ec4c8;
   --color-accent-serif: #9a7b3c;
   --color-group-label: #6b7a3a;
+  --color-canvas-bg: var(--color-bg-warm);
+  --color-canvas-surface: color-mix(in srgb, var(--color-surface) 92%, var(--color-navy) 8%);
+  --color-canvas-border: color-mix(in srgb, var(--color-navy) 18%, var(--color-border) 82%);
+  --color-canvas-line: color-mix(in srgb, var(--color-navy) 24%, transparent);
+  --color-canvas-text: var(--color-navy-deep);
+  --color-canvas-muted: var(--color-text-muted);
+  --color-canvas-accent: var(--color-blue);
+  --color-canvas-highlight: var(--color-accent-serif);
+  --color-canvas-dot: color-mix(in srgb, var(--color-navy) 12%, transparent);
 
   --font-sans: 'Inter Variable', Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-serif: Georgia, 'Times New Roman', serif;
@@ -26,10 +36,14 @@
   --font-atkinsons: 'Atkinsons', sans-serif;
 
   --shadow-card: 0 8px 24px rgba(0, 40, 120, 0.06);
-  --radius-card: 40px;
+  --radius-card: 30px;
   --radius-md: 12px;
   --content-width: 1180px;
   --header-height: 92px;
+}
+
+::-webkit-scrollbar {
+  display: none;
 }
 
 html {
@@ -51,6 +65,7 @@ body {
   color: rgb(var(--gray-dark));
 	font-size: 20px;
 	line-height: 1.7;
+  /* scrollbar-width: none; */
 }
 
 

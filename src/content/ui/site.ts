@@ -1,5 +1,5 @@
 export const brand = {
-  name: 'PAMANA',
+  name: 'PROMETHEUS',
   tagline: 'Prostate Cancer Support Website',
   teReo: 'Te tautoko mō te matepukupuku repe tāne',
 };
@@ -7,7 +7,7 @@ export const brand = {
 export const footerLinks = [
   {
     label: 'Documentation',
-    href: 'https://github.com/arzenikos/blueprint-nz',
+    href: 'https://github.com/arzenikos/prostate-care',
     icon: 'github' as const,
     external: true,
   },
@@ -63,7 +63,7 @@ export const hubs = {
     intro:
       'To help you find the right answers without the noise, please select the clinical state or treatment stage that best describes where you or your loved one are today. We will instantly tailor the page to show only what is relevant to you.',
     prompt: 'I am looking for information on...',
-    illustration: 'Placeholder: prostate anatomy illustration',
+    illustration: 'path-cards/path-patient-space',
   },
   whanau: {
     kicker: 'WHĀNAU SUPPORT HUB',
@@ -74,9 +74,9 @@ export const hubs = {
     ],
     heading: 'Whānau & Friends Support Hub',
     intro:
-      'To help you find the right answers without the noise, please select the clinical state or treatment stage that best describes where you or your loved one are today. We will instantly tailor the page to show only what is relevant to you.',
+      'When someone you care about is facing prostate cancer, it can be hard to know where to begin. This space is here to help you feel informed, steady, and supported as you walk alongside them.',
     sectionTitle: 'The Basics You Need',
-    illustration: 'Placeholder: family with ribbon illustration',
+    illustration: 'path-cards/path-family-corner',
   },
   research: {
     kicker: 'RESEARCH KNOWLEDGE HUB',
@@ -88,9 +88,9 @@ export const hubs = {
     heading: 'Research & Student Hub',
     intro:
       'Explore peer-reviewed clinical trial data, pharmacokinetic analyses, and epidemiological statistics shaping modern prostate oncology.',
-    cta: 'View NZ and global data',
-    ctaHref: '/blueprint/bluestats',
-    illustration: 'Placeholder: microscope and awareness ribbon',
+    cta: 'Explore PCOR‑ANZ Statistics',
+    ctaHref: 'https://prostatecancerregistry.org/',
+    illustration: 'path-cards/path-researcher-hub',
   },
 };
 
@@ -101,11 +101,11 @@ export const overlays = {
     body: 'Sign up to receive monthly guides, community stories, and the latest clinical insights to support you, your whānau, and your healthcare team.',
     footerLink: { label: 'See all newsletters', href: '/newsletters' },
   },
-  clinics: {
-    id: 'clinics',
-    heading: 'Find a clinic near me',
-    body: 'Find a healthcare team, seek a second opinion, and search for accredited urologists and cancer centres across New Zealand.',
-    footerLink: { label: 'Search clinics', href: '/clinics' },
+  "support-and-services": {
+    id: 'support-and-services',
+    heading: 'Support and Services',
+    body: 'Find a clinic near you, connect with support groups, work with your healthcare team, seek a second opinion, and explore accredited urologists and cancer centres across New Zealand.',
+    footerLink: { label: 'Find Care and Community Support', href: '/support-and-services' },
   },
   node: {
     id: 'node',

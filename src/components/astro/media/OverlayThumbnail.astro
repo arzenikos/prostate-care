@@ -1,0 +1,22 @@
+---
+import { resolveAsset } from '@utils/resolveAssets';
+
+interface Props {
+  src: string;
+  alt: string;
+}
+
+const { src, alt } = Astro.props;
+---
+
+<img src={resolveAsset(src)} alt={alt} class="overlay-thumbnail" />
+
+<style>
+  .overlay-thumbnail {
+    display: block;
+    height: auto;
+    width: 11vw;
+    /* max-height: 28vw; */
+    object-fit: contain;
+  }
+</style>

@@ -1,0 +1,31 @@
+---
+import { getEntry, render } from 'astro:content';
+import ArticleLayout from '@layouts/ArticleLayout.astro';
+
+const slug = Astro.params.slug;
+if (!slug) {
+  return Astro.redirect('/patient-space', 404);
+}
+
+const article = await getEntry('patient', slug);
+if (!article || article.data.draft) {
+  return Astro.redirect('/patient-space', 404);
+}
+
+const { Content } = await render(article);
+const heading = article.data.heading ?? article.data.title;
+---
+
+<ArticleLayout
+  title={`Pamana | ${article.data.title}`}
+  heading={heading}
+  hub="patient"
+  illustration={article.data.illustration}
+  breadcrumbs={[
+    { label: 'Home', href: '/' },
+    { label: 'Navigating Your Diagnosis', href: '/patient-space' },
+    { label: heading },
+  ]}
+>
+  <Content />
+</ArticleLayout>

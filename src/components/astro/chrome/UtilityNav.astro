@@ -1,0 +1,110 @@
+---
+import LineIcon from '@components/astro/ui/LineIcon.astro';
+import AccessibilityPanelOverlay from '@components/astro/chrome/AccessibilityPanelOverlay.astro';
+
+const items = [
+  { id: 'newsletter', label: 'Newsletter', icon: 'mail' as const },
+  { id: 'support-and-services', label: 'Support & Services', icon: 'pin' as const },
+  { id: 'node', label: 'Node', icon: 'node' as const },
+  // { id: 'accessibility', label: 'Accessibility', icon: 'accessibility' as const },
+];
+---
+
+<nav class="utility-nav" aria-label="Site utilities">
+  {items.map((item) => (
+    <button
+      type="button"
+      class="utility-btn"
+      data-overlay={item.id}
+      aria-expanded="false"
+      aria-controls={`hub-overlay-${item.id}`}
+      aria-label={item.label}
+    >
+      <LineIcon name={item.icon} />
+    </button>
+  ))}
+
+  <AccessibilityPanelOverlay/>
+</nav>
+
+<style>
+  .utility-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    position: sticky;
+    top: 0;
+    z-index: 1003;
+  }
+
+  .utility-btn {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    /* background: var(--color-bg); */
+    color: var(--color-navy);
+    cursor: pointer;
+  }
+
+  .utility-btn::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -1.95rem;
+    z-index: 1005;
+    width: max-content;
+    height: auto;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    background: var(--color-navy);
+    color: var(--color-surface);
+    content: attr(aria-label);
+    font-size: 0.7rem;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+    transform: translateX(-50%) translateY(-0.25rem);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+
+  .utility-btn::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -2.15rem;
+    z-index: 1001;
+    width: 0;
+    height: 0;
+    border-right: 1.25rem solid transparent;
+    border-bottom: 1.4rem solid var(--color-navy);
+    border-left: 1.25rem solid transparent;
+    transform: translateX(-50%) translateY(-0.25rem);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+  }
+
+  .utility-btn.is-active,
+  .utility-btn:hover {
+    color: var(--color-overlay);
+  }
+
+  /* .utility-btn:hover::after,
+  .utility-btn:focus-visible::after {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  } */
+
+  .utility-btn.is-active::before {
+    z-index: 1004;
+    opacity: 1 !important;
+    transform: translateX(-50%) translateY(0);
+  }
+
+</style>

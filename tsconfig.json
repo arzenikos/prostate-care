@@ -8,11 +8,13 @@
         "paths": {
             "@/*": ["./src/*"],
             "@assets/*": ["./public/assets/*"],
+            "@logo/*": ["./public/assets/images/logo/*"],
             "@components/*": ["./src/components/*"],
             "@layouts/*": ["./src/layouts/*"],
             "@utils/*": ["./src/utils/*"],
             "@styles/*": ["./src/styles/*"],
             "@library/*": ["./src/lib/*"],
+            "@rag-library/*": ["./src/lib/rag/*"],
             "@contents/*": ["./src/content/*"]
         }
     }

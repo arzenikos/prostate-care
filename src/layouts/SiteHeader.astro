@@ -1,6 +1,6 @@
 ---
-import BrandMark from '@components/brand/BrandMark.astro';
-import UtilityNav from '@components/chrome/UtilityNav.astro';
+import BrandMark from '@components/astro/brand/BrandMark.astro';
+import UtilityNav from '@components/astro/chrome/UtilityNav.astro';
 import type { HubId } from '@contents/ui/site';
 import { hubs } from '@contents/ui/site';
 
@@ -37,7 +37,7 @@ const hubCopy = hubs[hub];
   .site-header {
     position: sticky;
     top: 0;
-    z-index: 40;
+    z-index: 1002;
     background: var(--color-bg);
   }
 

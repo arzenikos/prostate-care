@@ -1,32 +1,32 @@
 @layer components {
-  .markdown {
-    > * {
-      @apply my-6;
+    .markdown {
+      > * {
+        @apply my-6;
+      }
+  
+      :where(h1, h2) {
+        @apply mt-12 mb-6;
+      }
+  
+      > :first-child {
+        @apply mt-0;
+      }
+  
+      > :last-child {
+        @apply mb-0;
+      }
     }
-
-    :where(h1, h2) {
-      @apply mt-12 mb-6;
+  
+    pre {
+      @apply p-6 overflow-x-auto rounded-lg;
+      background-color: var(--color-palette-one);
+      color: var(--color-palette-five);
     }
-
-    > :first-child {
-      @apply mt-0;
-    }
-
-    > :last-child {
-      @apply mb-0;
+  
+    :not(pre) > code {
+      @apply px-1 py-0.5 font-mono rounded;
+      background-color: var(--color-palette-one);
+      color: var(--color-palette-five);
+      font-size: 0.9em;
     }
   }
-
-  pre {
-    @apply p-6 overflow-x-auto rounded-lg;
-    background-color: var(--color-palette-one);
-    color: var(--color-palette-five);
-  }
-
-  :not(pre) > code {
-    @apply px-1 py-0.5 font-mono rounded;
-    background-color: var(--color-palette-one);
-    color: var(--color-palette-five);
-    font-size: 0.9em;
-  }
-}

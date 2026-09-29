@@ -1,8 +1,8 @@
 ---
 import SiteHeader from '@layouts/SiteHeader.astro';
 import SiteFooter from '@layouts/SiteFooter.astro';
-import HubOverlay from '@components/chrome/HubOverlay.astro';
-import ChatTrigger from '@components/chrome/ChatTrigger.astro';
+import HubOverlay from '@components/astro/chrome/HubOverlay.astro';
+import PrometheusChat from '@components/astro/chrome/PrometheusChat.astro';
 import type { HubId } from '@contents/ui/site';
 import '@styles/globals.css';
                 
@@ -35,18 +35,18 @@ const {
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
     <title>
-      {title}</title>
-      <link rel="icon" type="image/png" href="@assets/images/logo/pamana-logo.png"/>
+     Prometheus | {title}</title>
+      <link rel="icon" type="image/png" href="/public/assets/images/logo/pamana-logo-blue.png"/>
   </head>
   <body>
     <SiteHeader variant={variant} hub={hub} />
+    <PrometheusChat client:load />
     
     <HubOverlay />
 
     <main>
       <slot />
     </main>
-    {showChat && <ChatTrigger />}
     <SiteFooter />
   </body>
 </html>
